@@ -156,11 +156,13 @@ class Item {
 		this.name = name;
 		this.ammo = ammo;
 		this.angle = angle;
-		this.angleDeviation = guns[name][""]
-
+		this.angleDeviation = guns[this.name]["spread"]
 	}
 	fire(owner) {
-		new Laser(1, owner.x, owner.y, this.angle, 250, 'laser', owner);
+		for(i = 0; i < guns[this.name]["shots"]) {
+			
+			new Laser(1, owner.x, owner.y, this.angle, 250, 'laser', owner);
+		}
 	}
 }
 
