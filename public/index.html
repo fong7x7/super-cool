@@ -4,16 +4,25 @@
     <title>Super Cool</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="style.css">
-</head>
-<body>
+    <link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" src="startup.js"></script>
     <script type="text/javascript" src="render_engine.js"></script>
-
+    <script type="text/javascript" src="api_comm.js"></script>
+</head>
+<body>
     <div class="header">
         <h>SUPER COOL</h>
     </div>
     <div class="main-body">
-        <canvas id="game_screen" width="1280" height="720"></canvas>
+        <div id="login_screen" style="display: block">
+            <div class="screen-body">
+                <div><h class="title-logo">SUPER COOL</h></div>
+                <div><input id="nameInput" type="text" class="login-input" placeholder="ENTER NAME"/></div>
+                <div class="button" id="joinButton">JOIN</div>
+            </div>
+        </div>
+        <canvas id="game_screen" width="1280" height="720" style="display: none"></canvas>
     </div>
     <div>
         <div class="button" id="moveButton">MOVE</div>
@@ -22,13 +31,13 @@
     </div>
     <script>
         (function() {
+            let gamestate = {};
+
+            let player = new Player();
+            let api_comm = new APIComm();
             let render = new RenderEngine();
             let move_line = new MouseLine();
             let shoot_line = new MouseLine();
-            let player = new Player();
-            player.x = 100;
-            player.y = 100;
-
             shoot_line.color = SHOOT_COLOR;
             shoot_line.is_scaled = false;
 
@@ -95,10 +104,26 @@
                 render.play();
             });
 
-            render.add(shoot_line);
-            render.add(move_line);
-            render.add(player);
-            render.start();
+            document.getElementById('joinButton').addEventListener('mouseup', function() {
+                let name = document.getElementById('nameInput').value;
+                api_comm.sendPlayerLogin(name, (data) => {
+                    player.entityId = data.playerId;
+                    console.log("Joined Session! id: " + player.entityId);
+
+                    api_comm.getGameState((data) => {
+                        gamestate = data;
+
+                        render.add(shoot_line);
+                        render.add(move_line);
+
+                        render.resetPlayers(data.players, player);
+                        render.start();
+
+                        document.getElementById('login_screen').setAttribute("style", "display: none");
+                        document.getElementById('game_screen').setAttribute("style", "display: block");
+                    });
+                });
+            });
         })();
     </script>
 </body>
