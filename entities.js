@@ -38,7 +38,7 @@ class wall extends Entity {
 }
 
 class Item {
-	constructor(name, entityId, ammo) {
+	constructor(name, entityId, ammo, angle ) {
 		this.name = name;
 		this.entityId = entityId;
 		this.ammo = ammo;
@@ -47,5 +47,3 @@ class Item {
 		console.log("fire")
 	}
 }
-
-var gun = new Item('pistol', 1, 3)
