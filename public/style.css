@@ -11,6 +11,13 @@ h {
     font-size: 100px;
 }
 
+.count {
+    display: inline-block;
+    width: 500px;
+    text-align: right;
+    margin-left: 50px;
+}
+
 #login_screen {
     width: 1280px;
     height: 720px;

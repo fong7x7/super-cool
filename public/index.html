@@ -12,6 +12,7 @@
 <body>
     <div class="header">
         <h>SUPER COOL</h>
+        <div class="count" id="countBox" style="display: none"><h>Player Count: <span id="playerCount">1</span></h></div>
     </div>
     <div class="main-body">
         <div id="login_screen" style="display: block">
@@ -134,6 +135,7 @@
 
                         document.getElementById('login_screen').setAttribute("style", "display: none");
                         document.getElementById('game_screen').setAttribute("style", "display: block");
+                        document.getElementById('countBox').setAttribute("style", "display: inline-block");
                     });
                 });
             });
@@ -149,14 +151,34 @@
                             console.log(data);
                             render.updateEntities(gamestate, data);
                             gamestate = data;
+                            render.onAnimateDone(() => {
+                                render.players.forEach((player) => {
+                                    data.players.forEach((new_player) => {
+                                        if(player.entityId == new_player.entityId) {
+                                            player.x = new_player.x;
+                                            player.y = new_player.y;
+                                        }
+                                    });
+                                });
+                                data.lasers.forEach((laser) => {
+                                    render.entities.forEach((ent) => {
+                                        if(ent.type == 'laser' && ent.entityId == laser.entityId) {
+                                            ent.x = laser.x;
+                                            ent.y = laser.y;
+                                        }
+                                    });
+                                });
+                            });
                             disableLines();
                             render.play();
+                            document.getElementById('playerCount').innerHTML = gamestate.players.length;
                         });
                     } else if(current_player_update_time < data.newPlayerTimeStamp) {
                         current_player_update_time = data.newPlayerTimeStamp;
                         api_comm.getGameState((data) => {
                             gamestate = data;
                             render.resetPlayers(data.players, player);
+                            document.getElementById('playerCount').innerHTML = gamestate.players.length;
                         });
                     }
                 });

@@ -261,6 +261,10 @@ class RenderEngine {
         this.animate = true;
     }
 
+    onAnimateDone(callback) {
+        this.animate_done = callback;
+    }
+
     update() {
         let engine = this;
         if(this.animate) {
@@ -273,6 +277,9 @@ class RenderEngine {
             this.animate_time += engine.delta_time;
             if(this.animate_time >= ANIMATE_TIME) {
                 this.animate = false;
+                if(this.animate_done) {
+                    this.animate_done();
+                }
             }
         }
     }

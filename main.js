@@ -143,8 +143,8 @@ class Wall extends Entity {
 
 class ItemGround {
 	constructor(isBarrel=false) {
-		this.x = randomNumber(windowWidth)
-		this.y = randomNumber(windowHeight)
+		this.x = randomNumber(windowWidth);
+		this.y = randomNumber(windowHeight);
 		this.pickupAble = true;
 		if (isBarrel) {
 			this.entityType = "barrel";
@@ -256,13 +256,22 @@ function update() {
     //     return laser != null;
     // });
 
+    playersArray.forEach((player) => {
+        player.x = player.x+Math.cos(player.angle)*player.magnitude;
+        player.y = player.y+Math.sin(player.angle)*player.magnitude;
+    });
+    lasers.forEach((laser) => {
+        laser.x = laser.x+Math.cos(laser.angle)*laser.magnitude;
+        laser.y = laser.y+Math.sin(laser.angle)*laser.magnitude;
+    });
+
     new ItemGround();
 }
 
 function determineCollision() {
     let result = {
-        playersHit: [],
-        lasersHit: []
+        playersHit: new Set(),
+        lasersHit: new Set()
     };
     for(let i = 0; i < lasers.length; i++) {
         let laser = lasers[i];
@@ -273,6 +282,7 @@ function determineCollision() {
 
         for(let j = 0; j < playersArray.length; j++) {
             let player = playersArray[j];
+            if(laser.ownerId == player.entityId) { continue; }
             let p1 = new Point(player.x, player.y);
             let p2 = new Point(player.x+Math.cos(player.angle)*player.magnitude, player.y+Math.sin(player.angle)*player.magnitude);
 
@@ -282,20 +292,23 @@ function determineCollision() {
                 let dy = intersection.y-q1.y;
                 let mag = Math.sqrt(dx*dx+dy*dy);
                 let time_hit = mag/laser.magnitude;
+                console.log("collision in course!");
                 if(closest_time == -1 || time_hit < closest_time) {
                     let player_at_time = new Point(player.x+Math.cos(player.angle)*player.magnitude*time_hit, player.y+Math.sin(player.angle)*player.magnitude*time_hit);
-
-                    if(Point.distance(intersection, player_at_time) < player.size) {
+                    let distance = Point.distance(intersection, player_at_time);
+                    if(distance < player.size) {
                     // if(determinePlayerHit(player_at_time, player.size, laser)) {
                         closest_time = time_hit;
                         closest_player_index = j;
+                    } else {
+                        console.log("Distance too far: " + distance);
                     }
                 }
             }
         }
         if(closest_time > -1) {
-            result.playersHit.push(closest_player_index);
-            result.lasersHit.push(i);
+            result.playersHit.add(closest_player_index);
+            result.lasersHit.add(i);
         }
     }
 
