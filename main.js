@@ -203,16 +203,12 @@ function createWalls(numOfWalls){
 
 //                 Update Function             //
 function update() {
-	playersArray.forEach();
-	function playersArrayUpdate(player, index, array) {
-		player.shoot();
-		player.movementConfirmed = false;
-		new ItemGround();
-	}
+	playersArray.forEach((player) => {
+	    player.shoot();
+        player.movementConfirmed = false;
+        new ItemGround();
+    });
 }
-
-
-new ItemGround
 
 setInterval(function(){
  ++roundTimer;

@@ -34,6 +34,7 @@
             let gamestate = {};
 
             let current_update_time = -1;
+            let current_player_update_time = -1;
             let player = new Player();
             let api_comm = new APIComm();
             let render = new RenderEngine();
@@ -137,7 +138,19 @@
             window.setInterval(()=>{
                 api_comm.getHeartBeat((data) => {
                     if(current_update_time == -1) {
-                        current_update_time = data.a
+                        current_update_time = data.readyTimeStamp;
+                        current_player_update_time = data.newPlayerTimeStamp;
+                    } else if(current_update_time < data.readyTimeStamp) {
+                        api_comm.getGameState((data) => {
+                            render.updateEntities(gamestate, data);
+                            gamestate = data;
+                            render.play();
+                        });
+                    } else if(current_player_update_time < data.newPlayerTimeStamp) {
+                        api_comm.getGameState((data) => {
+                            gamestate = data;
+                            render.resetPlayers(data.players, player);
+                        });
                     }
                 });
             }, 500);

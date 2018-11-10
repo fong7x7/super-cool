@@ -178,6 +178,17 @@ class RenderEngine {
         });
     }
 
+    updateEntities(previous, current) {
+        players.forEach((player) => {
+            current.players((new_player) => {
+                if(player.entityId == new_player.entityId) {
+                    player.vx = new_player.vx;
+                    player.vy = new_player.vy;
+                }
+            });
+        });
+    }
+
     play() {
         this.animate_time = 0;
         this.animate = true;
