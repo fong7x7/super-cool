@@ -205,6 +205,7 @@ class RenderEngine {
                 engine.addPlayer(render_player);
             } else {
                 let new_player = new Player();
+                new_player.entityId = player.entityId;
                 new_player.x = player.x;
                 new_player.y = player.y;
                 new_player.vx = Math.cos(player.angle)*player.magnitude;
@@ -217,7 +218,6 @@ class RenderEngine {
 
     getPlayerByID(id) {
         for(let i = 0; i < this.players.length; i++) {
-            console.log(this.players[i]);
             if(this.players[i].entityId === id) {
                 return this.players[i];
             }
@@ -238,7 +238,6 @@ class RenderEngine {
 
         current.lasers.forEach((laser) => {
             let was_found = false;
-            console.log(laser);
             engine.entities.forEach((ent) => {
                 if(ent.type == 'laser' && ent.entityId == laser.entityId) {
                     ent.vx = Math.cos(laser.angle)*laser.magnitude;

@@ -144,6 +144,7 @@
                         current_update_time = data.readyTimeStamp;
                         current_player_update_time = data.newPlayerTimeStamp;
                     } else if(current_update_time < data.readyTimeStamp) {
+                        current_update_time = data.readyTimeStamp;
                         api_comm.getGameState((data) => {
                             console.log(data);
                             render.updateEntities(gamestate, data);
@@ -152,6 +153,7 @@
                             render.play();
                         });
                     } else if(current_player_update_time < data.newPlayerTimeStamp) {
+                        current_player_update_time = data.newPlayerTimeStamp;
                         api_comm.getGameState((data) => {
                             gamestate = data;
                             render.resetPlayers(data.players, player);
