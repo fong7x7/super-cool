@@ -17,7 +17,7 @@ var roundTimer = 0;
 var numOfWalls = 8, wallsArray = [], numOfBarrels = 5, barrelsArray = [];
 var newPlayerTimeStamp = 0;
 var playersReadyTimeStamp = 0;
-var guns = {'pistol': {'spread': 0.087, 'shots': 1, 'ammo': 50},'shotgun': {'spread': 0.35, 'shots': 5, 'ammo': 8 }, 'rifle': {'spread': 0.18, 'shots': 3, 'ammo': 12} };
+var guns = {'pistol': {'spread': 0.05, 'shots': 1, 'ammo': 50},'shotgun': {'spread': 0.15, 'shots': 5, 'ammo': 8 }, 'rifle': {'spread': 0.1, 'shots': 3, 'ammo': 12} };
 //           SERVER                 //
 
 app.use(express.json());
