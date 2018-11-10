@@ -21,7 +21,9 @@ class APIComm {
             dataType: 'json',
             contentType: 'application/json',
             success: function (data) {
-                callback();
+                if(callback) {
+                    callback();
+                }
             },
             data: JSON.stringify({
                 playerId: id,
