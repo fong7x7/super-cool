@@ -45,7 +45,7 @@ app.post('/player/login', function (req, res) {
 	let name = "johnny";
 	const player = createPlayer(name);
 	console.log("player created");
-	res.json(player.entityId);
+	res.json({ playerId: player.entityId});
 });
 
 app.listen(port, () => console.log(`Server running on ${port}!`));
