@@ -27,10 +27,12 @@ app.get('/gamestate', function (req, res) {
 });
 
 app.get('/heartbeat', function (req, res) {
-	var allPlayersReady = playersArray.every(checkMovement);
-
-	function checkMovement(player, index, array) {
-		return player.movementConfirmed === true;
+	var allPlayersReady = false
+	if (playersArray.length != 0) {
+		allPlayersReady = playersArray.every(checkMovement);
+		function checkMovement(player, index, array) {
+			return player.movementConfirmed === true;
+		}
 	}
 
 
@@ -45,7 +47,7 @@ app.post('/player/action', function (req, res) {
 	currentPlayer.setMovement(json["move"]["angle"], json["move"]["magnitude"]);
 	currentPlayer.aimWeapon(json["shoot"]["angle"], json["shoot"]["magnitude"]);
 	if (json["swap"] == null) {
-		continue;
+		console.log("noSwap");
 	} else {
 		currentPlayer.swapWeapon(json["swap"]);
 	}
