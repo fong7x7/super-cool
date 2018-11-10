@@ -212,8 +212,8 @@ class RenderEngine {
     }
 
     updateEntities(previous, current) {
-        players.forEach((player) => {
-            current.players((new_player) => {
+        this.players.forEach((player) => {
+            current.players.forEach((new_player) => {
                 if(player.entityId == new_player.entityId) {
                     player.vx = new_player.vx;
                     player.vy = new_player.vy;

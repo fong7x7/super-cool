@@ -6,7 +6,6 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     <link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="startup.js"></script>
     <script type="text/javascript" src="render_engine.js"></script>
     <script type="text/javascript" src="api_comm.js"></script>
 </head>
@@ -142,6 +141,7 @@
                         current_player_update_time = data.newPlayerTimeStamp;
                     } else if(current_update_time < data.readyTimeStamp) {
                         api_comm.getGameState((data) => {
+                            console.log(data);
                             render.updateEntities(gamestate, data);
                             gamestate = data;
                             render.play();

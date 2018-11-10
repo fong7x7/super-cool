@@ -40,20 +40,18 @@ app.get('/heartbeat', function (req, res) {
 });
 
 app.post('/player/action', function (req, res) {
-	console.log(req)
-	json = {playerId: 1, move: {angle: 20, magnitude: 40}, shoot: {angle: 30, magnitude: 60}, swap: null}
-	console.log(json["playerId"])
-	currentPlayer = getPlayerById(json["playerId"])
-	currentPlayer.setMovement(json["move"]["angle"], json["move"]["magnitude"]);
-	currentPlayer.aimWeapon(json["shoot"]["angle"], json["shoot"]["magnitude"]);
-	if (json["swap"] == null) {
+	let index = getPlayerIndexByID(req.body.playerId);
+	let currentPlayer = playersArray[index];
+	currentPlayer.setMovement(req.body.move.angle, req.body.move.magnitude);
+	currentPlayer.aimWeapon(req.body.shoot.angle, req.body.shoot.magnitude);
+	if (!req.body.move.swap) {
 		console.log("noSwap");
 	} else {
-		currentPlayer.swapWeapon(json["swap"]);
+		currentPlayer.swapWeapon(req.body.swap);
 	}
 	currentPlayer.movementConfirmed = true;
 
-    if (playersArray.length != 0) {
+    if (playersArray.length > 0) {
         let allPlayersReady = true;
     	for(let i = 0; i < playersArray.length; i++) {
     		if(playersArray[i].movementConfirmed !== true) {
@@ -61,6 +59,7 @@ app.post('/player/action', function (req, res) {
     			break;
 			}
 		}
+		console.log('Players ready? ' + allPlayersReady);
 		if(allPlayersReady) {
             playersReadyTimeStamp = new Date().getTime();
             update();
@@ -191,11 +190,13 @@ function createPlayer(name) {
 	return newPlayer
 }
 
-function getPlayerById(id){
-	return playersArray.find(myFunction);
-	function myFunction(player, index, array){
-		return player.entityId === id;
-	}
+function getPlayerIndexByID(id){
+    for(let i = 0; i < playersArray.length; i++) {
+        if(playersArray[i].entityId == id) {
+            return i;
+        }
+    }
+    return null;
 }
 
 function createWalls(numOfWalls){
@@ -529,7 +530,7 @@ class MathEngine {
         if(check_point.equals(a)) { return true; }
         if(check_point.equals(a)) { return true; }
 
-        return MathEngine.distance(a, check_point) + MathEngine.distance(b, check_point) <= MathEngine.distance(a,b) + 0.00000001;
+        return Point.distance(a, check_point) + Point.distance(b, check_point) <= Point.distance(a,b) + 0.00000001;
     }
 
 }
