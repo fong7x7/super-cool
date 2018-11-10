@@ -26,7 +26,6 @@
     <div>
         <div class="button" id="moveButton">MOVE</div>
         <div class="button" id="shootButton">FIRE</div>
-        <div class="button" id="playButton">PLAY</div>
     </div>
     <script>
         (function() {
@@ -102,21 +101,21 @@
                 shoot_line.is_enabled = true;
             });
 
-            document.getElementById('playButton').addEventListener('mouseup', function() {
-                disableLines();
-
-                let limited = move_line.getLimitedMousePos();
-                player.vx = limited.x-player.x;
-                player.vy = limited.y-player.y;
-
-                let bullet = new Laser();
-                let angle = Math.atan2(shoot_line.y-shoot_line.start_y, shoot_line.x-shoot_line.start_x);
-                bullet.x = player.x;
-                bullet.y = player.y;
-                bullet.setDirection(angle);
-                render.add(bullet);
-                render.play();
-            });
+//            document.getElementById('playButton').addEventListener('mouseup', function() {
+//                disableLines();
+//
+//                let limited = move_line.getLimitedMousePos();
+//                player.vx = limited.x-player.x;
+//                player.vy = limited.y-player.y;
+//
+//                let bullet = new Laser();
+//                let angle = Math.atan2(shoot_line.y-shoot_line.start_y, shoot_line.x-shoot_line.start_x);
+//                bullet.x = player.x;
+//                bullet.y = player.y;
+//                bullet.setDirection(angle);
+//                render.add(bullet);
+//                render.play();
+//            });
 
             document.getElementById('joinButton').addEventListener('mouseup', function() {
                 let name = document.getElementById('nameInput').value;

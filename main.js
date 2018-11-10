@@ -41,6 +41,11 @@ app.get('/heartbeat', function (req, res) {
 
 app.post('/player/action', function (req, res) {
 	let index = getPlayerIndexByID(req.body.playerId);
+	if(index == null) {
+	    console.log("PLAYER NOT FOUND");
+	    return;
+    }
+
 	let currentPlayer = playersArray[index];
 	currentPlayer.setMovement(req.body.move.angle, req.body.move.magnitude);
 	currentPlayer.aimWeapon(req.body.shoot.angle, req.body.shoot.magnitude);
@@ -239,17 +244,17 @@ function update() {
         player.vx = 0;
         player.vy = 0;
     });
-    playersArray = playersArray.filter((player) => {
-        return player.lives > 0;
-    });
+    // playersArray = playersArray.filter((player) => {
+    //     return player.lives > 0;
+    // });
 
-    result.lasersHit.forEach((index)=> {
-        lasers[index] = null; // remove laser!
-    });
-
-    lasers = lasers.filter((laser)=> {
-        return laser != null;
-    });
+    // result.lasersHit.forEach((index)=> {
+    //     lasers[index] = null; // remove laser!
+    // });
+    //
+    // lasers = lasers.filter((laser)=> {
+    //     return laser != null;
+    // });
 
     new ItemGround();
 }
@@ -279,7 +284,9 @@ function determineCollision() {
                 let time_hit = mag/laser.magnitude;
                 if(closest_time == -1 || time_hit < closest_time) {
                     let player_at_time = new Point(player.x+Math.cos(player.angle)*player.magnitude*time_hit, player.y+Math.sin(player.angle)*player.magnitude*time_hit);
-                    if(determinePlayerHit(player_at_time, player.size, laser)) {
+
+                    if(Point.distance(intersection, player_at_time) < player.size) {
+                    // if(determinePlayerHit(player_at_time, player.size, laser)) {
                         closest_time = time_hit;
                         closest_player_index = j;
                     }
@@ -306,7 +313,7 @@ function determinePlayerHit(player, player_size, laser) {
     let q1 = new Point(laser.x, laser.y);
     let q2 = new Point(laser.x+Math.cos(laser.angle)*laser.size, laser.y+Math.sin(laser.angle)*laser.size);
 
-    return MathEngine.intersectsPolygon(poly, q1, q2);
+    return MathEngine.intersectsPolygon(poly, q1, q2); //|| MathEngine.isInsidePolygon(q1, poly) || MathEngine.isInsidePolygon(q2, poly);
 }
 
 setInterval(function(){
@@ -472,11 +479,13 @@ class MathEngine {
             let p2 = polygon.at(i);
 
             if(MathEngine.intersects(p1, p2, q1, q2)) {
+                console.log('poly intersection!');
                 return true;
             }
 
             p1 = p2;
         }
+        console.log('poly fail!');
         return false
     }
 
@@ -519,7 +528,27 @@ class MathEngine {
         return null;
     }
 
-    /**
+    static isInsidePolygon(point, polygon) {
+        let count = polygon.size();
+        let is_inside = false;
+
+        // Ray cast to the right to determine if point is inside polygon
+        for(let i = 0; i < count; i++) {
+            let current = polygon.at(i);
+            let next = i == count-1 ? polygon.at(0) : polygon.at(i+1);
+
+            if(MathEngine.isOnLine(point, current, next)) { return true; }
+
+            if( ((current.y >= point.y ) != (next.y >= point.y))
+                && (point.x <= (next.x - current.x) * (point.y - current.y) / (next.y - current.y) + current.x)) {
+                is_inside = !is_inside;
+            }
+        }
+
+        return is_inside;
+    }
+
+/**
      * Determines if a given point is on the line between a and b
      * @param check_point
      * @param a
