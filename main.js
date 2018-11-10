@@ -6,6 +6,8 @@ const port = 8080;
 //          Future Weapons        //
 //           Variables           //
 var playersArray = [];
+var lasers = [];
+var laser_id = 1;
 var playerCount = 0;
 var windowWidth = 1280;
 var windowHeight = 720;
@@ -106,7 +108,7 @@ class Player extends Entity {
 		this.items = [item];
 		this.name = name;
 		this.movementConfirmed = false;
-		this.lasers = [];
+		this.size = 10;
 	}
 	aimWeapon(angle, magnitude) {
 		console.log(this.equiped);
@@ -115,17 +117,13 @@ class Player extends Entity {
 	swapWeapon(index) {
 		this.equiped = this.items[index];
 	}
-	shoot(){
-		this.equiped.fire(this);
-	}
 }
 
 class Laser extends Entity {
-	constructor(id, x, y, angle, magnitude, entityType='laser', ownerId) {
-		super(id, x, y, angle, magnitude, entityType)
-		this.entityType = 'laser'
-		this.ownerId = ownerId
-		this.ownerId.lasers.push(this);
+	constructor(id, x, y, angle, magnitude, ownerId) {
+		super(id, x, y, angle, magnitude, 'laser');
+		this.ownerId = ownerId;
+        this.size = 30;
 	}
 }
 
@@ -163,16 +161,8 @@ class Item {
 		this.name = name;
 		this.ammo = guns[this.name]["ammo"];
 		this.angle = angle;
-		this.angleDeviation = guns[this.name]["spread"]
-	}
-	fire(owner) {
-		if (this.ammo > 0) {
-			for(i = 0; i < guns[this.name]['shots']; i++) {
-				angleOfLaser = this.angle + (randomNumber(this.angleDeviation * 2) - this.angleDeviation);
-				new Laser(1, owner.x, owner.y, angleOfLaser, 250, 'laser', owner);
-			}
-			this.ammo -= 1;
-		}
+		this.angleDeviation = guns[name][""]
+
 	}
 }
 
@@ -209,7 +199,7 @@ function getPlayerById(id){
 }
 
 function createWalls(numOfWalls){
-	for (i = 0; i < numOfWalls; i++) {
+	for (let i = 0; i < numOfWalls; i++) {
 // constructor(id, x, y, angle, magnitude, entityType, width=10, height=50) {
 		new Wall(1, randomNumber(windowWidth), randomNumber(windowHeight), 'wall', 4, randomNumber(50) + 10);
 	}
@@ -223,11 +213,91 @@ function createBarrels(numOfBarrels){
 
 //                 Update Function             //
 function update() {
+    // spawn lasers
 	playersArray.forEach((player) => {
-	    player.shoot();
+        let laser = new Laser(laser_id, player.x, player.y, player.equiped.angle, 250, player.entityId);
+        lasers.push(laser);
+        laser_id++;
         player.movementConfirmed = false;
-        new ItemGround();
     });
+
+	let result = determineCollision();
+    result.playersHit.forEach((index) => {
+        let player = playersArray[index];
+        player.lives -= 1;
+        player.x = randomNumber(windowWidth);
+        player.y = randomNumber(windowHeight);
+        player.vx = 0;
+        player.vy = 0;
+    });
+    playersArray = playersArray.filter((player) => {
+        return player.lives > 0;
+    });
+
+    result.lasersHit.forEach((index)=> {
+        lasers[index] = null; // remove laser!
+    });
+
+    lasers = lasers.filter((laser)=> {
+        return laser != null;
+    });
+
+    new ItemGround();
+}
+
+function determineCollision() {
+    let result = {
+        playersHit: [],
+        lasersHit: []
+    };
+    for(let i = 0; i < lasers.length; i++) {
+        let laser = lasers[i];
+        let q1 = new Point(laser.x, laser.y);
+        let q2 = new Point(laser.x+Math.cos(laser.angle)*laser.magnitude, laser.y+Math.sin(laser.angle)*laser.magnitude);
+        let closest_time = -1;
+        let closest_player_index = 0;
+
+        for(let j = 0; j < playersArray.length; j++) {
+            let player = playersArray[j];
+            let p1 = new Point(player.x, player.y);
+            let p2 = new Point(player.x+Math.cos(player.angle)*player.magnitude, player.y+Math.sin(player.angle)*player.magnitude);
+
+            let intersection = MathEngine.intersects(p1, p2, q1, q2);
+            if(intersection) {
+                let dx = intersection.x-q1.x;
+                let dy = intersection.y-q1.y;
+                let mag = Math.sqrt(dx*dx+dy*dy);
+                let time_hit = mag/laser.magnitude;
+                if(closest_time == -1 || time_hit < closest_time) {
+                    let player_at_time = new Point(player.x+Math.cos(player.angle)*player.magnitude*time_hit, player.y+Math.sin(player.angle)*player.magnitude*time_hit);
+                    if(determinePlayerHit(player_at_time, player.size, laser)) {
+                        closest_time = time_hit;
+                        closest_player_index = j;
+                    }
+                }
+            }
+        }
+        if(closest_time > -1) {
+            result.playersHit.push(closest_player_index);
+            result.lasersHit.push(i);
+        }
+    }
+
+    return result;
+}
+
+function determinePlayerHit(player, player_size, laser) {
+    let poly = new Polygon();
+    let offset = player_size/2;
+    poly.add(new Point(player.x-offset, player.y+offset));
+    poly.add(new Point(player.x+offset, player.y+offset));
+    poly.add(new Point(player.x+offset, player.y-offset));
+    poly.add(new Point(player.x-offset, player.y-offset));
+
+    let q1 = new Point(laser.x, laser.y);
+    let q2 = new Point(laser.x+Math.cos(laser.angle)*laser.size, laser.y+Math.sin(laser.angle)*laser.size);
+
+    return MathEngine.intersectsPolygon(poly, q1, q2);
 }
 
 setInterval(function(){
@@ -408,20 +478,20 @@ class MathEngine {
      * @param p2
      * @param q1
      * @param q2
-     * @return boolean if the segments intersect
+     * @return {Point} if the segments intersect
      */
     static intersects(p1, p2, q1, q2) {
         if(MathEngine.isOnLine(p1, q1, q2)) {
-            return true;
+            return p1;
         }
         if(MathEngine.isOnLine(q1, p1, p2)) {
-            return true;
+            return q1;
         }
         if(MathEngine.isOnLine(q2, p1, p2)) {
-            return true;
+            return q2;
         }
         if(MathEngine.isOnLine(p2, q1, q2)) {
-            return true;
+            return p2;
         }
 
         let r = Point.sub(p2, p1);
@@ -430,11 +500,14 @@ class MathEngine {
         let u = Point.cross((p1-q1), r)/Point.cross(s,r);
         let cross_r_s = Point.cross(r,s);
 
-        if(cross_r_s == 0) { return false; }
+        if(cross_r_s == 0) { return null; }
 
         let t = Point.cross((q1-p1), s)/cross_r_s;
 
-        return (0 < t && t < 1) && (0 < u && u < 1);
+        if((0 < t && t < 1) && (0 < u && u < 1)) {
+            return Point.add(p1, Point.scale(r, t));
+        }
+        return null;
     }
 
     /**
