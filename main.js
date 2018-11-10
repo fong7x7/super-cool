@@ -1,18 +1,10 @@
-var http = require('http');
-var fs = require('fs');
-var url = require('url');
+var express = require('express');
+var app = express();
+const port = 8080;
 
+// respond with "hello world" when a GET request is made to the homepage
+app.get('/', function (req, res) {
+    res.send('hello world');
+});
 
-http.createServer(function (req, res) {
-	// console.log(req);
-	fs.readFile('startup.html', function(err, data) {
-		if (err) {
-			res.writeHead(404, {'Content-Type': 'text/html'});
-			return res.end("404 Not Found");
-		}
-		res.writeHead(200, {'Content-Type': 'text/html'});
-		res.write(data);
-		res.end();
-	})
-
-}).listen(8080);
+app.listen(port, () => console.log(`Server running on ${port}!`));
