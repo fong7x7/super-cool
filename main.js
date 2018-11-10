@@ -30,7 +30,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/gamestate', function (req, res) {
-	res.json({players: playersArray, items: itemsOnGroundArray, walls: wallsArray});
+	res.json({players: playersArray, items: itemsOnGroundArray, walls: wallsArray, barrels: barrelsArray});
 });
 
 app.get('/heartbeat', function (req, res) {
@@ -167,7 +167,7 @@ class Item {
 	}
 	fire(owner) {
 		if (this.ammo > 0) {
-			for(i = 0; i < guns[this.name]["shots"]) {
+			for(i = 0; i < guns[this.name]['shots']; i++) {
 				angleOfLaser = this.angle + (randomNumber(this.angleDeviation * 2) - this.angleDeviation);
 				new Laser(1, owner.x, owner.y, angleOfLaser, 250, 'laser', owner);
 			}

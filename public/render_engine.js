@@ -3,6 +3,15 @@ const MOVE_COLOR = '#00FF00';
 const SHOOT_COLOR = '#FF0000';
 const MOUSE_LINE_LENGTH = 50;
 
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
 class Entity {
     constructor() {
         this.x = 0;
@@ -26,7 +35,7 @@ class Player extends Entity {
         this.size = 10;
         this.vx = 20;
         this.vy = 20;
-        this.color = "#00FF00";
+        this.color = getRandomColor();
         this.name = "LOSER";
     }
 
@@ -66,6 +75,30 @@ class Laser extends Entity {
 
         ctxt.beginPath();
         ctxt.lineWidth = 2;
+        ctxt.strokeStyle = this.color;
+        ctxt.moveTo(this.x, this.y);
+        ctxt.lineTo(next_x, next_y);
+        ctxt.stroke();
+    }
+}
+
+
+class Wall extends Entity {
+    constructor() {
+        super();
+        this.size = 50;
+        this.velocity = 0;
+        this.color = "#000000";
+    }
+
+    draw(ctxt) {
+        // line segment from x to y
+        let angle = Math.atan2(this.vy, this.vx);
+        let next_x = this.x + Math.cos(angle)*this.size;
+        let next_y = this.y + Math.sin(angle)*this.size;
+
+        ctxt.beginPath();
+        ctxt.lineWidth = 4;
         ctxt.strokeStyle = this.color;
         ctxt.moveTo(this.x, this.y);
         ctxt.lineTo(next_x, next_y);
