@@ -12,11 +12,9 @@ var windowHeight = 720;
 var weaponsArray = ["barrel"];//"shotgun", "grenade", "rocketLauncher"];
 var itemsOnGroundArray = [];
 var roundTimer = 0;
-var newPlayerAdded = false;
 var numOfWalls = 8, wallsArray = [];
-
-
-
+var newPlayerTimeStamp = 0;
+var playersReadyTimeStamp = 0;
 
 //           SERVER                 //
 
@@ -32,21 +30,11 @@ app.get('/', function (req, res) {
 });
 
 app.get('/gamestate', function (req, res) {
-	res.json({players: playersArray, items: itemsOnGroundArray})
-	if (roundTimer == 0) {newPlayerAdded = false;}
+	res.json({players: playersArray, items: itemsOnGroundArray});
 });
 
 app.get('/heartbeat', function (req, res) {
-	var allPlayersReady = false
-	if (playersArray.length != 0) {
-		allPlayersReady = playersArray.every(checkMovement);
-		function checkMovement(player, index, array) {
-			update();
-			return player.movementConfirmed === true;
-		}
-	}
-
-	res.json({ ready: allPlayersReady, roundTime: roundTimer })
+	res.json({ readyTimeStamp: playersReadyTimeStamp, newPlayerTimeStamp: newPlayerTimeStamp, roundTime: roundTimer })
 });
 
 app.post('/player/action', function (req, res) {
@@ -62,13 +50,27 @@ app.post('/player/action', function (req, res) {
 		currentPlayer.swapWeapon(json["swap"]);
 	}
 	currentPlayer.movementConfirmed = true;
+
+    if (playersArray.length != 0) {
+        let allPlayersReady = true;
+    	for(let i = 0; i < playersArray.length; i++) {
+    		if(playersArray[i].movementConfirmed !== true) {
+    			allPlayersReady = false;
+    			break;
+			}
+		}
+		if(allPlayersReady) {
+            playersReadyTimeStamp = new Date().getTime();
+		}
+    }
+
 	res.json({playerActionReceived: true})
 });
 
 app.post('/player/login', function (req, res) {
 	const player = createPlayer(req.body.name);
 	console.log("player created");
-	newPlayerAdded = true;
+	newPlayerTimeStamp = new Date().getTime();
 	res.json({ playerId: player.entityId});
 });
 

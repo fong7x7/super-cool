@@ -33,6 +33,7 @@
         (function() {
             let gamestate = {};
 
+            let current_update_time = -1;
             let player = new Player();
             let api_comm = new APIComm();
             let render = new RenderEngine();
@@ -62,6 +63,14 @@
                 }
                 if(shoot_line.is_visible && shoot_line.is_enabled) {
                     shoot_line.is_enabled = false;
+                }
+                if(shoot_line.is_visible && move_line.is_visible) {
+                    let mdx = move_line.start_x-move_line.x;
+                    let mdy = move_line.start_y-move_line.y;
+                    let move_angle = Math.atan2(mdy, mdx);
+                    let shoot_angle = Math.atan2(shoot_line.start_y-shoot_line.y, shoot_line.start_x-shoot_line.x);
+
+                    api_comm.sendPlayerAction(player.entityId, { angle: move_angle, magnitude: Math.sqrt(mdx*mdx + mdy*mdy)}, { angle: shoot_angle });
                 }
             });
 
@@ -124,6 +133,14 @@
                     });
                 });
             });
+
+            window.setInterval(()=>{
+                api_comm.getHeartBeat((data) => {
+                    if(current_update_time == -1) {
+                        current_update_time = data.a
+                    }
+                });
+            }, 500);
         })();
     </script>
 </body>
