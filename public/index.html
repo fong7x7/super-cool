@@ -18,6 +18,17 @@
     <script>
         (function() {
             let render = new RenderEngine();
+            let mouse_line = new MouseLine();
+//            let is_move = true;
+//            mouse_line.enable(100, 199, MOUSE_LINE_LENGTH, is_move, MOVE_COLOR);
+
+            let rect = render.canvas.getBoundingClientRect();
+            render.canvas.addEventListener('mousemove', function(evt) {
+                mouse_line.x = evt.clientX - rect.left;
+                mouse_line.y = evt.clientY - rect.top;
+            });
+
+            render.add(mouse_line);
             render.start();
         })();
     </script>

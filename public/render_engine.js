@@ -1,4 +1,7 @@
 const ANIMATE_TIME = 0.5;
+const MOVE_COLOR = '#00FF00';
+const SHOOT_COLOR = '#FF0000';
+const MOUSE_LINE_LENGTH = 50;
 
 class Entity {
     constructor() {
@@ -45,7 +48,7 @@ class Laser extends Entity {
     constructor() {
         super();
         this.size = 30;
-        this.color = "#FF0000";
+        this.color = "#00FFFF";
         this.vx = 250;
         this.vy = 250;
     }
@@ -61,6 +64,52 @@ class Laser extends Entity {
         ctxt.strokeStyle = this.color;
         ctxt.moveTo(this.x, this.y);
         ctxt.lineTo(next_x, next_y);
+        ctxt.stroke();
+    }
+}
+
+class MouseLine extends Entity {
+    constructor() {
+        super();
+        this.size = 10;
+        this.start_x = 0;
+        this.start_y = 0;
+        this.color = MOVE_COLOR;
+        this.is_enabled = false;
+        this.is_scaled = true;
+    }
+
+    enable(x, y, size, is_scaled, color) {
+        this.start_x = x;
+        this.start_y = y;
+        this.size = size;
+        this.is_scaled = is_scaled;
+        this.is_enabled = true;
+        if(color) {
+            this.color = color;
+        }
+    }
+
+    disable() {
+        this.is_enabled = false;
+    }
+
+    draw(ctxt) {
+        if(!this.is_enabled) { return; }
+
+        ctxt.beginPath();
+        ctxt.lineWidth = 2;
+        ctxt.strokeStyle = this.color;
+        ctxt.moveTo(this.start_x, this.start_y);
+
+        let dx = this.x-this.start_x;
+        let dy = this.y-this.start_y;
+        if(this.is_scaled && Math.sqrt(dx*dx + dy*dy) < this.size) {
+            ctxt.lineTo(this.x, this.y);
+        } else {
+            let angle = Math.atan2(dy, dx);
+            ctxt.lineTo(this.start_x + Math.cos(angle)*this.size, this.start_y + Math.sin(angle) * this.size);
+        }
         ctxt.stroke();
     }
 }
