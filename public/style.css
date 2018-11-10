@@ -1,9 +1,41 @@
 body {
-    font-family: Impact;
+    font-family: 'Righteous';
 }
 
 h {
     font-size: 50px;
+}
+
+.title-logo {
+    color: #FFF;
+    font-size: 100px;
+}
+
+#login_screen {
+    width: 1280px;
+    height: 720px;
+    background-color: black;
+    text-align: center;
+    position: relative;
+}
+
+.screen-body {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.login-input {
+    padding: 10px;
+    height: 30px;
+    margin-bottom: 20px;
+    text-align: center;
+    border: none;
+    font-size: 20px;
+    background-color: transparent;
+    color: #00FFFF;
 }
 
 .button {
@@ -15,6 +47,7 @@ h {
     border: solid #333 2px;
     display: inline-block;
     margin-right: 5px;
+    background-color: #FFF;
     transition: color 0.3s;
     transition: background-color 0.3s;
 }

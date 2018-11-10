@@ -9,6 +9,7 @@ class Entity {
         this.y = 0;
         this.vx = 0;
         this.vy = 0;
+        this.entityId = 0;
     }
 
     update(delta_time) {
@@ -127,6 +128,7 @@ class RenderEngine {
         this.loop_rate = 60; // 60 frames per second
         this.delta_time = 1.0/this.loop_rate;
         this.entities = [];
+        this.players = [];
         this.animate = false;
         this.animate_time = 0;
     }
@@ -148,6 +150,34 @@ class RenderEngine {
         this.entities.push(entity);
     }
 
+    addPlayer(player) {
+        this.players.push(player);
+    }
+
+    resetPlayers(players, render_player) {
+        let engine = this;
+        engine.players = [];
+        players.forEach((player) => {
+            if(player.entityId == render_player.entityId) {
+                render_player.x = player.x;
+                render_player.y = player.y;
+                render_player.vx = Math.cos(player.angle)*player.magnitude;
+                render_player.vy = Math.sin(player.angle)*player.magnitude;
+                render_player.name = player.name;
+
+                engine.addPlayer(render_player);
+            } else {
+                let new_player = new Player();
+                new_player.x = player.x;
+                new_player.y = player.y;
+                new_player.vx = Math.cos(player.angle)*player.magnitude;
+                new_player.vy = Math.sin(player.angle)*player.magnitude;
+                new_player.name = player.name;
+                engine.addPlayer(new_player);
+            }
+        });
+    }
+
     play() {
         this.animate_time = 0;
         this.animate = true;
@@ -158,6 +188,9 @@ class RenderEngine {
         if(this.animate) {
             this.entities.forEach((entity) => {
                 entity.update(engine.delta_time);
+            });
+            this.players.forEach((player) => {
+                player.update(engine.delta_time);
             });
             this.animate_time += engine.delta_time;
             if(this.animate_time >= ANIMATE_TIME) {
@@ -173,6 +206,10 @@ class RenderEngine {
         // draw stuff here
         this.entities.forEach((entity) => {
             entity.draw(engine.ctxt);
+        });
+
+        this.players.forEach((player) => {
+            player.draw(engine.ctxt);
         });
 
         this.ctxt.save();
