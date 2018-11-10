@@ -42,6 +42,13 @@
             shoot_line.color = SHOOT_COLOR;
             shoot_line.is_scaled = false;
 
+            let disableLines = function() {
+                move_line.is_visible = false;
+                move_line.is_enabled = false;
+                shoot_line.is_visible = false;
+                shoot_line.is_enabled = false;
+            };
+
             render.canvas.addEventListener('mousemove', function(evt) {
                 let rect = render.canvas.getBoundingClientRect(); // need to use this every update since scroll changes it
 
@@ -95,10 +102,7 @@
             });
 
             document.getElementById('playButton').addEventListener('mouseup', function() {
-                move_line.is_visible = false;
-                move_line.is_enabled = false;
-                shoot_line.is_visible = false;
-                shoot_line.is_enabled = false;
+                disableLines();
 
                 let limited = move_line.getLimitedMousePos();
                 player.vx = limited.x-player.x;
@@ -144,6 +148,7 @@
                             console.log(data);
                             render.updateEntities(gamestate, data);
                             gamestate = data;
+                            disableLines();
                             render.play();
                         });
                     } else if(current_player_update_time < data.newPlayerTimeStamp) {

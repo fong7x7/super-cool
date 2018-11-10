@@ -19,6 +19,7 @@ class Entity {
         this.vx = 0;
         this.vy = 0;
         this.entityId = 0;
+        this.type = 'entity';
     }
 
     update(delta_time) {
@@ -37,6 +38,7 @@ class Player extends Entity {
         this.vy = 20;
         this.color = getRandomColor();
         this.name = "LOSER";
+        this.type = 'player';
     }
 
     draw(ctxt) {
@@ -60,6 +62,7 @@ class Laser extends Entity {
         this.size = 30;
         this.velocity = 250;
         this.color = "#00FFFF";
+        this.type = 'laser';
     }
 
     setDirection(angle) {
@@ -89,6 +92,7 @@ class Wall extends Entity {
         this.size = 50;
         this.velocity = 0;
         this.color = "#000000";
+        this.type = 'wall';
     }
 
     draw(ctxt) {
@@ -211,14 +215,45 @@ class RenderEngine {
         });
     }
 
+    getPlayerByID(id) {
+        for(let i = 0; i < this.players.length; i++) {
+            console.log(this.players[i]);
+            if(this.players[i].entityId === id) {
+                return this.players[i];
+            }
+        }
+        return null;
+    }
+
     updateEntities(previous, current) {
+        let engine = this;
         this.players.forEach((player) => {
             current.players.forEach((new_player) => {
                 if(player.entityId == new_player.entityId) {
-                    player.vx = new_player.vx;
-                    player.vy = new_player.vy;
+                    player.vx = Math.cos(new_player.angle)*new_player.magnitude;
+                    player.vy = Math.sin(new_player.angle)*new_player.magnitude;
                 }
             });
+        });
+
+        current.lasers.forEach((laser) => {
+            let was_found = false;
+            console.log(laser);
+            engine.entities.forEach((ent) => {
+                if(ent.type == 'laser' && ent.entityId == laser.entityId) {
+                    ent.vx = Math.cos(laser.angle)*laser.magnitude;
+                    ent.vy = Math.sin(laser.angle)*laser.magnitude;
+                }
+            });
+            if(!was_found) {
+                let new_laser = new Laser();
+                let owner = this.getPlayerByID(laser.ownerId);
+                new_laser.x = owner.x;
+                new_laser.y = owner.y;
+                new_laser.vx = Math.cos(laser.angle)*laser.magnitude;
+                new_laser.vy = Math.sin(laser.angle)*laser.magnitude;
+                this.add(new_laser);
+            }
         });
     }
 

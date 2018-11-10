@@ -32,7 +32,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/gamestate', function (req, res) {
-	res.json({players: playersArray, items: itemsOnGroundArray, walls: wallsArray, barrels: barrelsArray});
+	res.json({players: playersArray, lasers: lasers, items: itemsOnGroundArray, walls: wallsArray, barrels: barrelsArray});
 });
 
 app.get('/heartbeat', function (req, res) {
