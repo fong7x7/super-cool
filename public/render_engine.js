@@ -6,20 +6,11 @@ class Entity {
         this.y = 0;
         this.vx = 0;
         this.vy = 0;
-        this.animate = true;
-        this.animate_time = 0;
     }
 
     update(delta_time) {
-        if(this.animate) {
-            this.x += this.vx*delta_time;
-            this.y += this.vy*delta_time;
-            this.animate_time += delta_time;
-            if(this.animate_time >= ANIMATE_TIME) {
-                this.animate = false;
-                this.animate_time = 0;
-            }
-        }
+        this.x += this.vx*delta_time;
+        this.y += this.vy*delta_time;
     }
 
     draw(ctxt) {}
@@ -29,7 +20,10 @@ class Player extends Entity {
     constructor() {
         super();
         this.size = 10;
-        this.color = "#FF0000"
+        this.vx = 20;
+        this.vy = 20;
+        this.color = "#00FF00";
+        this.name = "LOSER";
     }
 
     draw(ctxt) {
@@ -40,6 +34,10 @@ class Player extends Entity {
         ctxt.fillStyle = this.color;
         ctxt.arc(this.x+this.size,this.y+this.size,10,0,2*Math.PI);
         ctxt.fill();
+
+        ctxt.fillStyle = this.color;
+        ctxt.font = "12px Impact";
+        ctxt.fillText(this.name, this.x - 6, this.y - 2);
     }
 }
 
@@ -74,6 +72,8 @@ class RenderEngine {
         this.loop_rate = 60; // 60 frames per second
         this.delta_time = 1.0/this.loop_rate;
         this.entities = [];
+        this.animate = false;
+        this.animate_time = 0;
     }
 
     start() {
@@ -93,11 +93,22 @@ class RenderEngine {
         this.entities.push(entity);
     }
 
+    play() {
+        this.animate_time = 0;
+        this.animate = true;
+    }
+
     update() {
         let engine = this;
-        this.entities.forEach((entity) => {
-            entity.update(engine.delta_time);
-        });
+        if(this.animate) {
+            this.entities.forEach((entity) => {
+                entity.update(engine.delta_time);
+            });
+            this.animate_time += engine.delta_time;
+            if(this.animate_time >= ANIMATE_TIME) {
+                this.animate = false;
+            }
+        }
     }
 
     draw() {
