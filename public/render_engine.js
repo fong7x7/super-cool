@@ -1,4 +1,4 @@
-const ANIMATE_TIME = 0.5;
+const ANIMATE_TIME = 1.0;
 const MOVE_COLOR = '#00FF00';
 const SHOOT_COLOR = '#FF0000';
 const MOUSE_LINE_LENGTH = 50;
@@ -35,12 +35,12 @@ class Player extends Entity {
 
         ctxt.beginPath();
         ctxt.fillStyle = this.color;
-        ctxt.arc(this.x+this.size,this.y+this.size,10,0,2*Math.PI);
+        ctxt.arc(this.x,this.y,10,0,2*Math.PI);
         ctxt.fill();
 
         ctxt.fillStyle = this.color;
         ctxt.font = "12px Impact";
-        ctxt.fillText(this.name, this.x - 6, this.y - 2);
+        ctxt.fillText(this.name, this.x - (this.size*1.5), this.y - this.size-2);
     }
 }
 
@@ -48,9 +48,13 @@ class Laser extends Entity {
     constructor() {
         super();
         this.size = 30;
+        this.velocity = 250;
         this.color = "#00FFFF";
-        this.vx = 250;
-        this.vy = 250;
+    }
+
+    setDirection(angle) {
+        this.vx = Math.cos(angle)*this.velocity;
+        this.vy = Math.sin(angle)*this.velocity;
     }
 
     draw(ctxt) {
@@ -71,31 +75,33 @@ class Laser extends Entity {
 class MouseLine extends Entity {
     constructor() {
         super();
-        this.size = 10;
+        this.size = 50;
         this.start_x = 0;
         this.start_y = 0;
         this.color = MOVE_COLOR;
         this.is_enabled = false;
+        this.is_visible = false;
         this.is_scaled = true;
     }
 
-    enable(x, y, size, is_scaled, color) {
+    setStart(x, y) {
         this.start_x = x;
         this.start_y = y;
-        this.size = size;
-        this.is_scaled = is_scaled;
-        this.is_enabled = true;
-        if(color) {
-            this.color = color;
-        }
     }
 
-    disable() {
-        this.is_enabled = false;
+    getLimitedMousePos() {
+        let dx = this.x-this.start_x;
+        let dy = this.y-this.start_y;
+        if(this.is_scaled && Math.sqrt(dx*dx + dy*dy) > this.size) {
+            let angle = Math.atan2(dy, dx);
+            return { x: this.start_x + Math.cos(angle) * this.size, y: this.start_y + Math.sin(angle) * this.size };
+
+        }
+        return { x: this.x, y: this.y}
     }
 
     draw(ctxt) {
-        if(!this.is_enabled) { return; }
+        if(!this.is_visible) { return; }
 
         ctxt.beginPath();
         ctxt.lineWidth = 2;

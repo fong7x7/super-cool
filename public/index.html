@@ -15,20 +15,89 @@
     <div class="main-body">
         <canvas id="game_screen" width="1280" height="720"></canvas>
     </div>
+    <div>
+        <div class="button" id="moveButton">MOVE</div>
+        <div class="button" id="shootButton">FIRE</div>
+        <div class="button" id="playButton">PLAY</div>
+    </div>
     <script>
         (function() {
             let render = new RenderEngine();
-            let mouse_line = new MouseLine();
-//            let is_move = true;
-//            mouse_line.enable(100, 199, MOUSE_LINE_LENGTH, is_move, MOVE_COLOR);
+            let move_line = new MouseLine();
+            let shoot_line = new MouseLine();
+            let player = new Player();
+            player.x = 100;
+            player.y = 100;
 
-            let rect = render.canvas.getBoundingClientRect();
+            shoot_line.color = SHOOT_COLOR;
+            shoot_line.is_scaled = false;
+
             render.canvas.addEventListener('mousemove', function(evt) {
-                mouse_line.x = evt.clientX - rect.left;
-                mouse_line.y = evt.clientY - rect.top;
+                let rect = render.canvas.getBoundingClientRect(); // need to use this every update since scroll changes it
+
+                if(move_line.is_enabled) {
+                    move_line.setStart(player.x, player.y);
+                    move_line.x = evt.clientX - rect.left;
+                    move_line.y = evt.clientY - rect.top;
+                }
+                if(shoot_line.is_enabled) {
+                    shoot_line.setStart(player.x, player.y);
+                    shoot_line.x = evt.clientX - rect.left;
+                    shoot_line.y = evt.clientY - rect.top;
+                }
             });
 
-            render.add(mouse_line);
+            render.canvas.addEventListener('mouseup', function(evt) {
+                if(move_line.is_visible && move_line.is_enabled) {
+                    move_line.is_enabled = false;
+                }
+                if(shoot_line.is_visible && shoot_line.is_enabled) {
+                    shoot_line.is_enabled = false;
+                }
+            });
+
+            document.getElementById('moveButton').addEventListener('mouseup', function() {
+                move_line.setStart(player.x, player.y);
+                if(shoot_line.is_enabled && shoot_line.is_visible) {
+                    shoot_line.is_visible = false;
+                    shoot_line.is_enabled = false;
+                }
+                move_line.is_visible = true;
+                move_line.is_enabled = true;
+            });
+
+            document.getElementById('shootButton').addEventListener('mouseup', function() {
+                shoot_line.setStart(player.x, player.y);
+                if(move_line.is_enabled && move_line.is_visible) {
+                    move_line.is_visible = false;
+                    move_line.is_enabled = false;
+                }
+                shoot_line.is_visible = true;
+                shoot_line.is_enabled = true;
+            });
+
+            document.getElementById('playButton').addEventListener('mouseup', function() {
+                move_line.is_visible = false;
+                move_line.is_enabled = false;
+                shoot_line.is_visible = false;
+                shoot_line.is_enabled = false;
+
+                let limited = move_line.getLimitedMousePos();
+                player.vx = limited.x-player.x;
+                player.vy = limited.y-player.y;
+
+                let bullet = new Laser();
+                let angle = Math.atan2(shoot_line.y-shoot_line.start_y, shoot_line.x-shoot_line.start_x);
+                bullet.x = player.x;
+                bullet.y = player.y;
+                bullet.setDirection(angle);
+                render.add(bullet);
+                render.play();
+            });
+
+            render.add(shoot_line);
+            render.add(move_line);
+            render.add(player);
             render.start();
         })();
     </script>
