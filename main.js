@@ -9,4 +9,20 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 
+app.get('/gamestate', function (req, res) {
+	console.log("login in progress")
+});
+
+app.get('/heartbeat', function (req, res) {
+	console.log("login in progress")
+});
+
+app.post('/player/action', function (req, res) {
+	console.log("login in progress")
+});
+
+app.post('/player/login', function (req, res) {
+	console.log("login in progress")
+});
+
 app.listen(port, () => console.log(`Server running on ${port}!`));
