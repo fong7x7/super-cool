@@ -15,6 +15,10 @@ var roundTimer = 0;
 
 //           SERVER                 //
 
+app.use(express.json());
+
+app.use(express.urlencoded());
+
 app.use(express.static(__dirname + '/public'));
 
 // respond with "hello world" when a GET request is made to the homepage
@@ -56,8 +60,7 @@ app.post('/player/action', function (req, res) {
 });
 
 app.post('/player/login', function (req, res) {
-	let name = "johnny";
-	const player = createPlayer(name);
+	const player = createPlayer(req.body.name);
 	console.log("player created");
 	res.json({ playerId: player.entityId});
 });
