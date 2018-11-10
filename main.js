@@ -11,7 +11,7 @@ var windowHeight = 720;
 var weaponsArray = ["shotgun", "grenade", "rocketLauncher"];
 var itemsOnGroundArray = [];
 var roundTimer = 0;
-
+var newPlayerAdded = false;
 
 //           SERVER                 //
 
@@ -28,6 +28,7 @@ app.get('/', function (req, res) {
 
 app.get('/gamestate', function (req, res) {
 	res.json({players: playersArray, items: itemsOnGroundArray})
+	if (roundTimer == 0) {newPlayerAdded = false;}
 });
 
 app.get('/heartbeat', function (req, res) {
@@ -35,10 +36,10 @@ app.get('/heartbeat', function (req, res) {
 	if (playersArray.length != 0) {
 		allPlayersReady = playersArray.every(checkMovement);
 		function checkMovement(player, index, array) {
+			update();
 			return player.movementConfirmed === true;
 		}
 	}
-
 
 	res.json({ ready: allPlayersReady, roundTime: roundTimer })
 });
@@ -62,6 +63,7 @@ app.post('/player/action', function (req, res) {
 app.post('/player/login', function (req, res) {
 	const player = createPlayer(req.body.name);
 	console.log("player created");
+	newPlayerAdded = true;
 	res.json({ playerId: player.entityId});
 });
 
@@ -94,9 +96,9 @@ class Player extends Entity {
 		this.lives = lives;
 		this.equiped = item;
 		this.items = [item];
-		console.log(this.items);
 		this.name = name;
 		this.movementConfirmed = false;
+		this.lasers = [];
 	}
 	aimWeapon(angle, magnitude) {
 		console.log(this.equiped);
@@ -105,6 +107,9 @@ class Player extends Entity {
 	swapWeapon(index) {
 		this.equiped = this.items[index];
 	}
+	shoot(){
+		this.equiped.fire(this);
+	}
 }
 
 class Laser extends Entity {
@@ -112,6 +117,7 @@ class Laser extends Entity {
 		super(id, x, y, angle, magnitude, entityType)
 		this.entityType = 'laser'
 		this.ownerId = ownerId
+		this.ownerId.lasers.push(this);
 	}
 }
 
@@ -139,8 +145,8 @@ class Item {
 		this.ammo = ammo;
 		this.angle = angle;
 	}
-	fire() {
-		console.log("fire")
+	fire(owner) {
+		new Laser(1, owner.x, owner.y, this.angle, 50, 'laser', owner);
 	}
 }
 
@@ -150,6 +156,7 @@ class Item {
 //                Functions             //
 // constructor(id, x, y, angle, magnitude, entityType="player" ,lives=3, items=["pistol"], name){
 	// constructor(name, entityId, ammo, angle ) {
+	// constructor(id, x, y, angle, magnitude, entityType='laser', ownerId) {
 
 function randomNumber(to){
 	return Math.ceil(Math.random() * to) - 1;
@@ -169,6 +176,14 @@ function getPlayerById(id){
 		return player.entityId === id;
 	}
 }
+
+function update() {
+	playersArray.forEach();
+	function playersArrayUpdate(player, index, array) {
+		player.shoot();
+	}
+}
+
 
 new ItemGround
 
