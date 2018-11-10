@@ -15,7 +15,7 @@ var roundTimer = 0;
 var numOfWalls = 8, wallsArray = [];
 var newPlayerTimeStamp = 0;
 var playersReadyTimeStamp = 0;
-
+var guns = {'pistol': {'spread': 10, 'shots': 1, 'ammo': 50},'shotgun': {'spread': 45, 'shots': 5, 'ammo': 8 }, 'rifle': {'spread': 25, 'shots': 3, 'ammo': 12} };
 //           SERVER                 //
 
 app.use(express.json());
@@ -30,7 +30,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/gamestate', function (req, res) {
-	res.json({players: playersArray, items: itemsOnGroundArray});
+	res.json({players: playersArray, items: itemsOnGroundArray, walls: wallsArray});
 });
 
 app.get('/heartbeat', function (req, res) {
@@ -61,6 +61,7 @@ app.post('/player/action', function (req, res) {
 		}
 		if(allPlayersReady) {
             playersReadyTimeStamp = new Date().getTime();
+            update();
 		}
     }
 
@@ -148,15 +149,18 @@ class ItemGround {
 		itemsOnGroundArray.push(this);
 	}
 }
+// var guns = {'pistol': {'spread': 10, 'shots': 1, 'ammo': 50},'shotgun': {'spread': 45, 'shots': 5, 'ammo': 8 }, 'rifle': {'spread': 25, 'shots': 3, 'ammo': 12} };
 
 class Item {
 	constructor(name, ammo, angle ) {
 		this.name = name;
 		this.ammo = ammo;
 		this.angle = angle;
+		this.angleDeviation = guns[name][""]
+
 	}
 	fire(owner) {
-		new Laser(1, owner.x, owner.y, this.angle, 50, 'laser', owner);
+		new Laser(1, owner.x, owner.y, this.angle, 250, 'laser', owner);
 	}
 }
 
@@ -178,7 +182,7 @@ function randomNumber(to){
 function createPlayer(name) {
 	//1280, 720
 	playerCount += 1;
-	newPlayer = new Player(playerCount, randomNumber(windowWidth), randomNumber(windowHeight), 0, 0, 'player', 3, new Item("pistol", 1000, 0), name );
+	newPlayer = new Player(playerCount, randomNumber(windowWidth), randomNumber(windowHeight), 0, 0, 'player', 3, new Item(Object.keys(guns)[0], 1000, 0), name );
 	playersArray.push(newPlayer);
 	return newPlayer
 }
@@ -197,11 +201,12 @@ function createWalls(numOfWalls){
 	}
 }
 
-// Update Function //
+//                 Update Function             //
 function update() {
 	playersArray.forEach();
 	function playersArrayUpdate(player, index, array) {
 		player.shoot();
+		player.movementConfirmed = false;
 		new ItemGround();
 	}
 }
