@@ -12,7 +12,7 @@ var windowHeight = 720;
 var weaponsArray = ["barrel"];//"shotgun", "grenade", "rocketLauncher"];
 var itemsOnGroundArray = [];
 var roundTimer = 0;
-var numOfWalls = 8, wallsArray = [];
+var numOfWalls = 8, wallsArray = [], numOfBarrels = 5, barrelsArray = [];
 var newPlayerTimeStamp = 0;
 var playersReadyTimeStamp = 0;
 var guns = {'pistol': {'spread': 10, 'shots': 1, 'ammo': 50},'shotgun': {'spread': 45, 'shots': 5, 'ammo': 8 }, 'rifle': {'spread': 25, 'shots': 3, 'ammo': 12} };
@@ -140,13 +140,20 @@ class Wall extends Entity {
 
 
 class ItemGround {
-	constructor() {
+	constructor(isBarrel=false) {
 		this.x = randomNumber(windowWidth)
 		this.y = randomNumber(windowHeight)
 		this.pickupAble = true;
-		this.entityType = weaponsArray[randomNumber(weaponsArray.length)]
-		if (this.entityType == "barrel") {this.pickupAble = false;}
-		itemsOnGroundArray.push(this);
+		if (isBarrel) {
+			this.entityType = "barrel";
+		} else {
+			this.entityType = weaponsArray[randomNumber(weaponsArray.length)];
+		}
+		if (this.entityType == "barrel") {
+			barrelsArray.push(this);
+		} else {
+			itemsOnGroundArray.push(this);
+		}
 	}
 }
 // var guns = {'pistol': {'spread': 10, 'shots': 1, 'ammo': 50},'shotgun': {'spread': 45, 'shots': 5, 'ammo': 8 }, 'rifle': {'spread': 25, 'shots': 3, 'ammo': 12} };
@@ -154,14 +161,17 @@ class ItemGround {
 class Item {
 	constructor(name, ammo, angle ) {
 		this.name = name;
-		this.ammo = ammo;
+		this.ammo = guns[this.name]["ammo"];
 		this.angle = angle;
 		this.angleDeviation = guns[this.name]["spread"]
 	}
 	fire(owner) {
-		for(i = 0; i < guns[this.name]["shots"]) {
-			
-			new Laser(1, owner.x, owner.y, this.angle, 250, 'laser', owner);
+		if (this.ammo > 0) {
+			for(i = 0; i < guns[this.name]["shots"]) {
+				angleOfLaser = this.angle + (randomNumber(this.angleDeviation * 2) - this.angleDeviation);
+				new Laser(1, owner.x, owner.y, angleOfLaser, 250, 'laser', owner);
+			}
+			this.ammo -= 1;
 		}
 	}
 }
@@ -169,6 +179,8 @@ class Item {
 
 //            Initiation Functions           //
 createWalls(numOfWalls);
+createBarrels(numOfBarrels);
+
 
 
 
@@ -200,6 +212,12 @@ function createWalls(numOfWalls){
 	for (i = 0; i < numOfWalls; i++) {
 // constructor(id, x, y, angle, magnitude, entityType, width=10, height=50) {
 		new Wall(1, randomNumber(windowWidth), randomNumber(windowHeight), 'wall', 4, randomNumber(50) + 10);
+	}
+}
+
+function createBarrels(numOfBarrels){
+	for (i = 0; i < numOfBarrels; i++) {
+		new ItemGround(true);
 	}
 }
 
