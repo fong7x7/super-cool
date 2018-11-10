@@ -161,7 +161,7 @@ class Item {
 		this.name = name;
 		this.ammo = guns[this.name]["ammo"];
 		this.angle = angle;
-		this.angleDeviation = guns[name][""]
+		this.angleDeviation = guns[this.name]["spread"];
 
 	}
 }
@@ -215,9 +215,17 @@ function createBarrels(numOfBarrels){
 function update() {
     // spawn lasers
 	playersArray.forEach((player) => {
-        let laser = new Laser(laser_id, player.x, player.y, player.equiped.angle, 250, player.entityId);
-        lasers.push(laser);
-        laser_id++;
+	    let weapon = player.equiped;
+        if (weapon.ammo > 0) {
+            for(let i = 0; i < guns[weapon.name]['shots']; i++) {
+                let angleOfLaser = weapon.angle + (randomNumber(weapon.angleDeviation * 2) - weapon.angleDeviation);
+                let laser = new Laser(laser_id, player.x, player.y, angleOfLaser, 250, player.entityId);
+                lasers.push(laser);
+                laser_id++;
+            }
+            weapon.ammo -= 1;
+        }
+
         player.movementConfirmed = false;
     });
 
