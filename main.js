@@ -17,7 +17,7 @@ var roundTimer = 0;
 var numOfWalls = 8, wallsArray = [], numOfBarrels = 5, barrelsArray = [];
 var newPlayerTimeStamp = 0;
 var playersReadyTimeStamp = 0;
-var guns = {'pistol': {'spread': 10, 'shots': 1, 'ammo': 50},'shotgun': {'spread': 45, 'shots': 5, 'ammo': 8 }, 'rifle': {'spread': 25, 'shots': 3, 'ammo': 12} };
+var guns = {'pistol': {'spread': 0.087, 'shots': 1, 'ammo': 50},'shotgun': {'spread': 0.35, 'shots': 5, 'ammo': 8 }, 'rifle': {'spread': 0.18, 'shots': 3, 'ammo': 12} };
 //           SERVER                 //
 
 app.use(express.json());
@@ -185,7 +185,7 @@ function randomNumber(to){
 function createPlayer(name) {
 	//1280, 720
 	playerCount += 1;
-	newPlayer = new Player(playerCount, randomNumber(windowWidth), randomNumber(windowHeight), 0, 0, 'player', 3, new Item(Object.keys(guns)[0], 1000, 0), name );
+	let newPlayer = new Player(playerCount, randomNumber(windowWidth), randomNumber(windowHeight), 0, 0, 'player', 3, new Item(Object.keys(guns)[randomNumber(3)], 1000, 0), name );
 	playersArray.push(newPlayer);
 	return newPlayer
 }
