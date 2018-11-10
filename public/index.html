@@ -3,12 +3,18 @@
 <head>
     <title>Super Cool</title>
     <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
-<body> hello 
+<body>
     <script type="text/javascript" src="startup.js"></script>
     <script type="text/javascript" src="render_engine.js"></script>
 
-    <canvas id="game_screen" width="1280" height="720"></canvas>
+    <div class="header">
+        <h>SUPER COOL</h>
+    </div>
+    <div class="main-body">
+        <canvas id="game_screen" width="1280" height="720"></canvas>
+    </div>
     <script>
         (function() {
             let render = new RenderEngine();
