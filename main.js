@@ -3,15 +3,20 @@ var app = express();
 const port = 8080;
 
 
+//          Future Weapons        //
 //           Variables           //
 var playersArray = [];
 var playerCount = 0;
 var windowWidth = 1280;
 var windowHeight = 720;
-var weaponsArray = ["shotgun", "grenade", "rocketLauncher"];
+var weaponsArray = ["barrel"];//"shotgun", "grenade", "rocketLauncher"];
 var itemsOnGroundArray = [];
 var roundTimer = 0;
 var newPlayerAdded = false;
+var numOfWalls = 8, wallsArray = [];
+
+
+
 
 //           SERVER                 //
 
@@ -121,11 +126,12 @@ class Laser extends Entity {
 	}
 }
 
-class wall extends Entity {
+class Wall extends Entity {
 	constructor(id, x, y, angle, magnitude, entityType, width=10, height=50) {
 		super(id, x, y, angle, magnitude, entityType)
 		this.width = width;
 		this.height = height;
+		wallsArray.push(this);
 	}
 }
 
@@ -134,7 +140,9 @@ class ItemGround {
 	constructor() {
 		this.x = randomNumber(windowWidth)
 		this.y = randomNumber(windowHeight)
+		this.pickupAble = true;
 		this.entityType = weaponsArray[randomNumber(weaponsArray.length)]
+		if (this.entityType == "barrel") {this.pickupAble = false;}
 		itemsOnGroundArray.push(this);
 	}
 }
@@ -150,6 +158,9 @@ class Item {
 	}
 }
 
+
+//            Initiation Functions           //
+createWalls(numOfWalls);
 
 
 
@@ -177,10 +188,19 @@ function getPlayerById(id){
 	}
 }
 
+function createWalls(numOfWalls){
+	for (i = 0; i < numOfWalls; i++) {
+// constructor(id, x, y, angle, magnitude, entityType, width=10, height=50) {
+		new Wall(1, randomNumber(windowWidth), randomNumber(windowHeight), 'wall', 4, randomNumber(50) + 10);
+	}
+}
+
+// Update Function //
 function update() {
 	playersArray.forEach();
 	function playersArrayUpdate(player, index, array) {
 		player.shoot();
+		new ItemGround();
 	}
 }
 
