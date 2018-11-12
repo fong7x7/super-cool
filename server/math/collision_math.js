@@ -1,4 +1,7 @@
-class CollisionMath {
+import PointMath from "point_math.js";
+
+export default class CollisionMath {
+
     /**
      *
      * @param polygon1

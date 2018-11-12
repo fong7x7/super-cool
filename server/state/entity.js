@@ -1,4 +1,4 @@
-class Entity {
+export default class Entity {
     constructor() {
         this.entityId = -1;
         this.x = 0;
@@ -8,6 +8,7 @@ class Entity {
         this.magnitude = 0;
         this.size = 30;
         this.physical = true;
+        this.name = "entity";
     }
 
     setMovement(angle, magnitude) {

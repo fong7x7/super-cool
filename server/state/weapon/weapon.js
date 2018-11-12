@@ -1,8 +1,6 @@
-function randomNumber(to) {
-    return Math.ceil(Math.random() * to) - 1;
-}
+import Entity from "../entity.js";
 
-class Weapon extends Entity {
+export default class Weapon extends Entity {
     constructor(name) {
         super();
         this.name = name;
@@ -26,22 +24,13 @@ class Weapon extends Entity {
         this.aim_angle = angle;
         this.aim_magnitude = mag;
     }
-}
 
-class Pistol extends Weapon {
-    constructor() {
-        super("pistol");
+    static randomNumber(to) {
+        return Math.ceil(Math.random() * to) - 1;
     }
 
-    fire() {
-        if(this.ammo <= 0) {
-            return [];
-        }
-
-        let spread_angle = this.aim_angle + (randomNumber(this.angleDeviation*2) - this.angleDeviation);
-        this.ammo -= 1;
-        return [
-            new Laser(this.x, this.y, spread_angle, this.aim_magnitude, this.ownerId)
-        ];
+    static formatAngle(angle) {
+        // TODO: format yaw angle to be between -180 and 180
+        return angle;
     }
 }

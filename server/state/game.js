@@ -1,8 +1,15 @@
+import CollisionMath from "../math/collision_math.js";
+import PointMath from "../math/point_math.js";
+import Barrel from "./barrel.js";
+import Wall from "./wall.js";
+import Player from "./player.js";
+import Laser from "./projectile/laser.js";
+
 function randomNumber(to) {
     return Math.ceil(Math.random() * to) - 1;
 }
 
-class Game {
+export default class Game {
     contructor(){
         this.playerIds = new Set();
         this.laserIds = new Set();
@@ -149,7 +156,7 @@ class Game {
             wall.y = randomNumber(height);
             wall.size = 30;
             wall.angle = randomNumber(2*Math.PI) + - Math.PI; // random angle from -180 to 180
-            addEntity(wall);
+            this.addEntity(wall);
         }
     }
 
@@ -158,7 +165,7 @@ class Game {
             let barrel = new Barrel();
             barrel.x = randomNumber(width);
             barrel.y = randomNumber(height);
-            addEntity(barrel);
+            this.addEntity(barrel);
         }
     }
 }

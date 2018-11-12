@@ -1,23 +1,14 @@
+import Game from "./server/state/game.js";
+
 var express = require('express');
 var app = express();
 const port = 8080;
 
-
-//          Future Weapons        //
-//           Variables           //
-
-// TODO: link this
 const game = new Game();
 
 var windowWidth = 1280;
 var windowHeight = 720;
-var weaponsArray = ["barrel"];//"shotgun", "grenade", "rocketLauncher"];
 var roundTimer = 0;
-var numOfWalls = 8, wallsArray = [], numOfBarrels = 5, barrelsArray = [];
-var newPlayerTimeStamp = 0;
-var playersReadyTimeStamp = 0;
-var guns = {'pistol': {'spread': 0.05, 'shots': 1, 'ammo': 50},'shotgun': {'spread': 0.15, 'shots': 5, 'ammo': 8 }, 'rifle': {'spread': 0.1, 'shots': 3, 'ammo': 12} };
-//           SERVER                 //
 
 app.use(express.json());
 
@@ -91,8 +82,6 @@ app.post('/player/login', function (req, res) {
 });
 
 app.listen(port, () => console.log(`Server running on ${port}!`));
-
-//            Initiation Functions           //
 
 function randomNumber(to){
 	return Math.ceil(Math.random() * to) - 1;
