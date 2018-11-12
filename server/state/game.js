@@ -17,13 +17,22 @@ export default class Game {
         this.currentEntityID = 0;
         this.updateTimeStamp = 0;
         this.newPlayerTimeStamp = 0;
+        this.roundTime = 0;
     };
+
+    startRoundTime() {
+        let game = this;
+        setInterval(function() {
+            game.roundTime += 1;
+        }, 1000);
+    }
 
     update() {
         this.fireWeapons();
         this.processProjectiles();
         this.resetPlayerMovements();
         this.updateTimeStamp = new Date().getTime();
+        this.roundTime = 0; // Reset round time once update is done
     }
 
     resetPlayerMovements() {
@@ -167,5 +176,14 @@ export default class Game {
             barrel.y = randomNumber(height);
             this.addEntity(barrel);
         }
+    }
+
+    static getRandomColor() {
+        let letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
     }
 }

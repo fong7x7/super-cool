@@ -5,10 +5,10 @@ var app = express();
 const port = 8080;
 
 const game = new Game();
+game.startRoundTime();
 
 var windowWidth = 1280;
 var windowHeight = 720;
-var roundTimer = 0;
 
 app.use(express.json());
 
@@ -29,7 +29,7 @@ app.get('/heartbeat', function (req, res) {
 	res.json({
 	    readyTimeStamp: game.updateTimeStamp,
         newPlayerTimeStamp: game.newPlayerTimeStamp,
-        roundTime: roundTimer
+        roundTime: game.roundTime
 	});
 });
 
@@ -72,6 +72,7 @@ app.post('/player/login', function (req, res) {
     let player = new Player();
     player.x = randomNumber(windowWidth);
     player.y = randomNumber(windowHeight);
+    player.color = Game.getRandomColor();
     player.addItem(pistol.entityId);
     game.addEntity(player);
 	game.newPlayerTimeStamp = new Date().getTime();
@@ -86,8 +87,3 @@ app.listen(port, () => console.log(`Server running on ${port}!`));
 function randomNumber(to){
 	return Math.ceil(Math.random() * to) - 1;
 }
-
-setInterval(function(){
- ++roundTimer;
- if (roundTimer > 10) {roundTimer = 0}
-}, 1000);
