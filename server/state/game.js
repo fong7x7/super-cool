@@ -4,6 +4,9 @@ import Barrel from "./barrel.js";
 import Wall from "./wall.js";
 import Player from "./player.js";
 import Laser from "./projectile/laser.js";
+import Pistol from "./weapon/pistol.js";
+import Rifle from "./weapon/rifle.js";
+import Shotgun from "./weapon/shotgun.js";
 
 function randomNumber(to) {
     return Math.ceil(Math.random() * to) - 1;
@@ -18,6 +21,9 @@ export default class Game {
         this.updateTimeStamp = 0;
         this.newPlayerTimeStamp = 0;
         this.roundTime = 0;
+        this.height = 720;
+        this.width = 1280;
+
     };
 
     startRoundTime() {
@@ -158,6 +164,22 @@ export default class Game {
         return CollisionMath.intersectsPolygon(Game.createHitBox(entity), laser, next_laser);
     }
 
+    createPlayer(name) {
+        let weapon = Game.generateRandomWeapon();
+        this.addEntity(weapon);
+
+        let player = new Player();
+        player.name = name;
+        player.x = randomNumber(this.width);
+        player.y = randomNumber(this.height);
+        player.color = Game.getRandomColor();
+        player.addItem(pistol.entityId);
+        this.addEntity(player);
+        this.newPlayerTimeStamp = new Date().getTime();
+
+        return player.entityId;
+    }
+
     createWalls(numOfWalls, width, height) {
         for (let i = 0; i < numOfWalls; i++) {
             let wall = new Wall();
@@ -185,5 +207,16 @@ export default class Game {
             color += letters[Math.floor(Math.random() * 16)];
         }
         return color;
+    }
+
+    static generateRandomWeapon() {
+        let num = randomNumber(3);
+
+        if(num == 1) {
+            return new Shotgun();
+        } else if(num == 2) {
+            return new Rifle();
+        }
+        return new Pistol();
     }
 }

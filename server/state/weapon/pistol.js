@@ -5,6 +5,7 @@ export default class Pistol extends Weapon {
     constructor() {
         super("pistol");
         this.angleDeviation = 0.05;
+        this.ammo = 1000;
     }
 
     fire() {

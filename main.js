@@ -1,14 +1,11 @@
 import Game from "./server/state/game.js";
 
-var express = require('express');
-var app = express();
+const express = require('express');
+const app = express();
 const port = 8080;
 
 const game = new Game();
 game.startRoundTime();
-
-var windowWidth = 1280;
-var windowHeight = 720;
 
 app.use(express.json());
 
@@ -66,20 +63,9 @@ app.post('/player/action', function (req, res) {
 });
 
 app.post('/player/login', function (req, res) {
-    let pistol = new Pistol();
-    game.addEntity(pistol);
+    let id = game.createPlayer(name);
 
-    let player = new Player();
-    player.x = randomNumber(windowWidth);
-    player.y = randomNumber(windowHeight);
-    player.color = Game.getRandomColor();
-    player.addItem(pistol.entityId);
-    game.addEntity(player);
-	game.newPlayerTimeStamp = new Date().getTime();
-
-    console.log("Player created: " + player.entityId);
-
-	res.json({ playerId: player.entityId});
+	res.json({ playerId: id});
 });
 
 app.listen(port, () => console.log(`Server running on ${port}!`));
