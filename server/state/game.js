@@ -70,10 +70,6 @@ export default class Game {
         return entity.entityId;
     }
 
-    updateEntity(id, data) {
-        this.entities[id] = data;
-    }
-
     getEntity(id) {
         return this.entities[id];
     }
@@ -106,15 +102,16 @@ export default class Game {
 
     determineCollision() {
         let entitiesHit = new Set();
+        let game = this;
 
-        for (let i = 0; i < lasers.length; i++) {
-            let laser = lasers[i];
+        this.laserIds.forEach((laserId) => {
+            let laser = game.entities[laserId];
             let predicted_laser = laser.predictPosition(laser);
             let closest_time = -1;
             let closest_entity_hit_id = -1;
 
-            Object.keys(this.entities).forEach(function(id) {
-                let entity = this.entities[id];
+            Object.keys(game.entities).forEach(function(id) {
+                let entity = game.entities[id];
                 if (laser.ownerId == entity.entityId) { return; } // skip if laser is owned by entity
                 if (entity.type == 'laser') { return; } // skip if entity is laser
                 if (!entity.physical) { return; } // skip non-physical objects
@@ -138,7 +135,7 @@ export default class Game {
                 entitiesHit.add(laser.entityId);
                 entitiesHit.add(closest_entity_hit_id);
             }
-        }
+        });
 
         return entitiesHit;
     }
