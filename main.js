@@ -1,4 +1,4 @@
-import Game from "./server/state/game.js";
+const Game = require("./server/state/game.js");
 
 const express = require('express');
 const app = express();

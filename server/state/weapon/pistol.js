@@ -1,7 +1,7 @@
-import Weapon from "./weapon.js";
-import Laser from "../projectile/laser.js";
+const Weapon = require("./weapon.js");
+const Laser = require("../projectile/laser.js");
 
-export default class Pistol extends Weapon {
+module.exports = class Pistol extends Weapon {
     constructor() {
         super("pistol");
         this.angleDeviation = 0.05;

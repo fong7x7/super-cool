@@ -1,6 +1,6 @@
-import Entity from "./entity.js";
+const Entity = require("./entity.js");
 
-export default class Wall extends Entity {
+module.exports = class Wall extends Entity {
     constructor(wall_angle) {
         super();
         this.wall_angle = wall_angle;

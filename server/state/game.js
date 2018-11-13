@@ -1,18 +1,18 @@
-import CollisionMath from "../math/collision_math.js";
-import PointMath from "../math/point_math.js";
-import Barrel from "./barrel.js";
-import Wall from "./wall.js";
-import Player from "./player.js";
-import Laser from "./projectile/laser.js";
-import Pistol from "./weapon/pistol.js";
-import Rifle from "./weapon/rifle.js";
-import Shotgun from "./weapon/shotgun.js";
+const CollisionMath = require("../math/collision_math.js");
+const PointMath = require("../math/point_math.js");
+const Barrel = require("./barrel.js");
+const Wall = require("./wall.js");
+const Player = require("./player.js");
+const Laser = require("./projectile/laser.js");
+const Pistol = require("./weapon/pistol.js");
+const Rifle = require("./weapon/rifle.js");
+const Shotgun = require("./weapon/shotgun.js");
 
 function randomNumber(to) {
     return Math.ceil(Math.random() * to) - 1;
 }
 
-export default class Game {
+module.exports = class Game {
     contructor(){
         this.playerIds = new Set();
         this.laserIds = new Set();

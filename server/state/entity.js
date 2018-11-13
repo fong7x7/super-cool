@@ -1,4 +1,4 @@
-export default class Entity {
+module.exports = class Entity {
     constructor() {
         this.entityId = -1;
         this.x = 0;

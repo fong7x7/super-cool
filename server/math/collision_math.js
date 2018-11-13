@@ -1,6 +1,6 @@
-import PointMath from "point_math.js";
+const PointMath = require("./point_math.js");
 
-export default class CollisionMath {
+module.exports = class CollisionMath {
 
     /**
      *

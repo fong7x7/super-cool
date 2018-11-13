@@ -1,6 +1,6 @@
-import Projectile from "./projectile.js";
+const Projectile = require("./projectile.js");
 
-export default class Laser extends Projectile {
+module.exports = class Laser extends Projectile {
     constructor(x, y, angle, magnitude, ownerId) {
         super(x, y, angle, magnitude, ownerId);
     }

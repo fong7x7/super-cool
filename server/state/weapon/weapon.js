@@ -1,6 +1,6 @@
-import Entity from "../entity.js";
+const Entity = require("../entity.js");
 
-export default class Weapon extends Entity {
+module.exports = class Weapon extends Entity {
     constructor(name) {
         super();
         this.name = name;

@@ -1,6 +1,6 @@
-import Entity from "./entity.js";
+const Entity = require("./entity.js");
 
-export default class Barrel extends Entity {
+module.exports = class Barrel extends Entity {
     constructor() {
         super();
         this.name = "barrel";
