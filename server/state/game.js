@@ -163,6 +163,7 @@ export default class Game {
 
     createPlayer(name) {
         let weapon = Game.generateRandomWeapon();
+        weapon.physical = false;
         this.addEntity(weapon);
 
         let player = new Player();
