@@ -63,9 +63,8 @@ app.post('/player/action', function (req, res) {
 });
 
 app.post('/player/login', function (req, res) {
-    let id = game.createPlayer(name);
-
-	res.json({ playerId: id});
+    let player = game.createPlayer(name);
+	res.json(player);
 });
 
 app.listen(port, () => console.log(`Server running on ${port}!`));

@@ -170,11 +170,11 @@ export default class Game {
         player.x = randomNumber(this.width);
         player.y = randomNumber(this.height);
         player.color = Game.getRandomColor();
-        player.addItem(pistol.entityId);
+        player.addItem(weapon.entityId);
         this.addEntity(player);
         this.newPlayerTimeStamp = new Date().getTime();
 
-        return player.entityId;
+        return player;
     }
 
     createWalls(numOfWalls, width, height) {
