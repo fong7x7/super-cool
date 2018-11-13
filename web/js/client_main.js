@@ -98,7 +98,7 @@ function main() {
                 api.getGameState((entities) => {
                     engine.updateEntities(entities);
                     updatePlayerData(entities);
-                    engine.animate_done = function() => {
+                    engine.animate_done = function() {
                         engine.entities = entities;
                     };
                     engine.hideMouseLines();
