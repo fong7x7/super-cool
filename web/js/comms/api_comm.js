@@ -1,4 +1,4 @@
-class APIComm {
+export default class APIComm {
     constructor() {}
 
     sendPlayerLogin(name, callback) {
