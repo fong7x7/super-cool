@@ -53,16 +53,15 @@ module.exports = class Game {
     }
 
     addEntity(entity) {
-        console.log(this);
-        console.log("Adding new entity. ID: ", this.currentEntityID);
+        console.log("Adding new entity (" + entity.type + "). ID: ", this.currentEntityID);
         entity.entityId = this.currentEntityID;
         this.entities[entity.entityId] = entity;
         this.currentEntityID++;
 
-        if(entity.prototype instanceof Player) {
-            this.playerIds.push(entity.entityId);
-        } else if(entity.prototype instanceof Laser) {
-            this.laserIds.push(entity.entityId);
+        if(entity.type === "player") {
+            this.playerIds.add(entity.entityId);
+        } else if(entity.type === "laser") {
+            this.laserIds.add(entity.entityId);
         }
 
         return entity.entityId;
