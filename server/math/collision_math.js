@@ -112,8 +112,8 @@ module.exports = class CollisionMath {
      * @returns {boolean}
      */
     static isOnLine(check_point, a, b) {
-        if(check_point.equals(a)) { return true; }
-        if(check_point.equals(a)) { return true; }
+        if(PointMath.equals(check_point, a)) { return true; }
+        if(PointMath.equals(check_point, b)) { return true; }
 
         return PointMath.distance(a, check_point) + PointMath.distance(b, check_point) <= PointMath.distance(a,b) + 0.00000001;
     }
