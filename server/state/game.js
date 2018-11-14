@@ -8,12 +8,8 @@ const Pistol = require("./weapon/pistol.js");
 const Rifle = require("./weapon/rifle.js");
 const Shotgun = require("./weapon/shotgun.js");
 
-function randomNumber(to) {
-    return Math.ceil(Math.random() * to) - 1;
-}
-
 module.exports = class Game {
-    contructor(){
+    constructor(){
         this.playerIds = new Set();
         this.laserIds = new Set();
         this.entities = {};
@@ -57,6 +53,8 @@ module.exports = class Game {
     }
 
     addEntity(entity) {
+        console.log(this);
+        console.log("Adding new entity. ID: ", this.currentEntityID);
         entity.entityId = this.currentEntityID;
         this.entities[entity.entityId] = entity;
         this.currentEntityID++;
@@ -168,8 +166,8 @@ module.exports = class Game {
 
         let player = new Player();
         player.name = name;
-        player.x = randomNumber(this.width);
-        player.y = randomNumber(this.height);
+        player.x = Game.randomNumber(this.width);
+        player.y = Game.randomNumber(this.height);
         player.color = Game.getRandomColor();
         player.addItem(weapon.entityId);
         this.addEntity(player);
@@ -181,10 +179,10 @@ module.exports = class Game {
     createWalls(numOfWalls, width, height) {
         for (let i = 0; i < numOfWalls; i++) {
             let wall = new Wall();
-            wall.x = randomNumber(width);
-            wall.y = randomNumber(height);
+            wall.x = Game.randomNumber(width);
+            wall.y = Game.randomNumber(height);
             wall.size = 30;
-            wall.angle = randomNumber(2*Math.PI) + - Math.PI; // random angle from -180 to 180
+            wall.angle = Game.randomNumber(2*Math.PI) + - Math.PI; // random angle from -180 to 180
             this.addEntity(wall);
         }
     }
@@ -192,8 +190,8 @@ module.exports = class Game {
     createBarrels(numOfBarrels, width, height){
         for (let i = 0; i < numOfBarrels; i++) {
             let barrel = new Barrel();
-            barrel.x = randomNumber(width);
-            barrel.y = randomNumber(height);
+            barrel.x = Game.randomNumber(width);
+            barrel.y = Game.randomNumber(height);
             this.addEntity(barrel);
         }
     }
@@ -208,7 +206,7 @@ module.exports = class Game {
     }
 
     static generateRandomWeapon() {
-        let num = randomNumber(3);
+        let num = Game.randomNumber(3);
 
         if(num == 1) {
             return new Shotgun();
@@ -217,4 +215,8 @@ module.exports = class Game {
         }
         return new Pistol();
     }
-}
+
+    static randomNumber(to) {
+        return Math.ceil(Math.random() * to) - 1;
+    }
+};
