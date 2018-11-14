@@ -7,7 +7,7 @@ class GraphicsEngine {
         this.loop_rate = 60; // 60 frames per second
         this.delta_time = 1.0/this.loop_rate;
         this.entities = {};
-        this.animate = false;
+        this.do_animation = false;
         this.animate_time = 0;
         this.animate_done = function(){};
 
@@ -22,7 +22,7 @@ class GraphicsEngine {
         window.requestAnimationFrame(() => {
             engine.draw();
         });
-        window.setInterval(() => { engine.update(); }, this.delta_time*1000);
+        window.setInterval(() => { engine.animate(); }, this.delta_time*1000);
     }
 
     clear() {
@@ -31,8 +31,10 @@ class GraphicsEngine {
     }
 
     updateEntities(entities) {
+        console.log(entities);
         let engine = this;
-        entities.forEach((entity) => {
+        Object.keys(entities).forEach(function(id) {
+            let entity = entities[id];
             let existing = engine.entities[entity.entityId];
             if(existing) {
                 existing.angle = entity.angle;
@@ -45,24 +47,27 @@ class GraphicsEngine {
 
     play() {
         this.animate_time = 0;
-        this.animate = true;
+        this.do_animation = true;
     }
 
     animateEntities(entities) {
         let engine = this;
-        entities.forEach((entity) => {
+        Object.keys(entities).forEach(function(id) {
+            let entity = entities[id];
+            if(!entity.physical) { return; } // don't animate non-physical objects
+
             entity.x += Math.cos(entity.angle)*entity.magnitude*engine.delta_time;
             entity.y += Math.sin(entity.angle)*entity.magnitude*engine.delta_time;
         });
     }
 
     animate() {
-        if(!this.animate) { return; }
+        if(!this.do_animation) { return; }
 
         this.animateEntities(this.entities);
         this.animate_time += this.delta_time;
         if(this.animate_time >= ANIMATE_TIME) {
-            this.animate = false;
+            this.do_animation = false;
             if(this.animate_done) {
                 this.animate_done();
             }
@@ -83,7 +88,8 @@ class GraphicsEngine {
         this.animate();
 
         // draw stuff here
-        this.entities.forEach((entity) => {
+        Object.keys(engine.entities).forEach(function(id) {
+            let entity = engine.entities[id];
             EntityRender.drawEntity(engine.ctxt, entity);
         });
 

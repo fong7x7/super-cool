@@ -3,11 +3,13 @@ class EntityRender {
     }
     
     static drawEntity(ctxt, entity) {
-        if(entity instanceof Laser) {
+        if(!entity.physical) { return; } // don't draw non-physical objects
+
+        if(entity.constructor.name === 'Laser') {
             EntityRender.drawLaser(ctxt, entity);
-        } else if(entity instanceof Player) {
+        } else if(entity.constructor.name === 'Player') {
             EntityRender.drawPlayer(ctxt, entity);
-        } else if(entity instanceof Wall) {
+        } else if(entity.constructor.name === 'Wall') {
             EntityRender.drawWall(ctxt, entity);
         }
     }
