@@ -31,7 +31,6 @@ class GraphicsEngine {
     }
 
     updateEntities(entities) {
-        console.log(entities);
         let engine = this;
         Object.keys(entities).forEach(function(id) {
             let entity = entities[id];
