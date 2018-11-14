@@ -76,6 +76,8 @@ module.exports = class Game {
         this.playerIds.forEach((id) => {
             let player = game.entities[id];
             let weapon = game.entities[player.equipedId];
+            weapon.x = player.x;
+            weapon.y = player.y;
             let projectiles = weapon.fire();
             projectiles.forEach((proj) => {
                 game.addEntity(proj);
@@ -171,6 +173,7 @@ module.exports = class Game {
         player.addItem(weapon.entityId);
         this.addEntity(player);
         this.newPlayerTimeStamp = new Date().getTime();
+        weapon.ownerId = player.entityId;
 
         return player;
     }
