@@ -15,6 +15,16 @@ function main() {
         });
     };
 
+    let getPlayerCount = function (entities) {
+        let playerCount = 0;
+        Object.keys(entities).forEach(function(id) {
+            if(entities[id].type == 'player') {
+                playerCount++;
+            }
+        });
+        return playerCount;
+    };
+
     engine.canvas.addEventListener('mousemove', function(evt) {
         let rect = engine.canvas.getBoundingClientRect(); // need to use this every update since scroll changes it
 
@@ -100,14 +110,14 @@ function main() {
                     };
                     engine.hideMouseLines();
                     engine.play();
-                    document.getElementById('playerCount').innerHTML = engine.entities;
+                    document.getElementById('playerCount').innerHTML = getPlayerCount(engine.entities);
                 });
             } else if(current_player_update_time < data.newPlayerTimeStamp) {
                 current_player_update_time = data.newPlayerTimeStamp;
                 api.getGameState((entities) => {
                     engine.updateEntities(entities);
                     updatePlayerData(entities);
-                    document.getElementById('playerCount').innerHTML = engine.entities;
+                    document.getElementById('playerCount').innerHTML = getPlayerCount(engine.entities);
                 });
             }
         });
