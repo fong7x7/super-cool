@@ -63,7 +63,7 @@ app.post('/player/action', function (req, res) {
 });
 
 app.post('/player/login', function (req, res) {
-    let player = game.createPlayer(name);
+    let player = game.createPlayer(req.name);
 	res.json(player);
 });
 
