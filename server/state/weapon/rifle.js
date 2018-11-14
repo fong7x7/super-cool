@@ -6,6 +6,7 @@ module.exports = class Rifle extends Weapon {
         super("rifle");
         this.angleDeviation = 0.01;
         this.rifle = 10;
+        this.type = "rifle";
     }
 
     fire() {

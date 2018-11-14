@@ -1,15 +1,16 @@
 const Entity = require("./entity.js");
 
 module.exports = class Player extends Entity {
-    constructor(name){
+    constructor() {
         super();
-        this.name = name;
+        this.name = "Unnamed Player";
         this.lives = 3;
         this.equipedId = -1;
         this.inventoryIds = [];
         this.movementConfirmed = false;
         this.color = "#FFFFFF";
         this.size = 10;
+        this.type = "player";
     }
 
     equipItem(index) {

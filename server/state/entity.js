@@ -9,6 +9,7 @@ module.exports = class Entity {
         this.size = 30;
         this.physical = true;
         this.name = "entity";
+        this.type = "entity";
     }
 
     setMovement(angle, magnitude) {

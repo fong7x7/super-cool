@@ -10,6 +10,7 @@ module.exports = class Weapon extends Entity {
         this.physical = false;
         this.aim_angle = 0;
         this.aim_magnitude = 0;
+        this.type = "weapon";
 
         // abstract class check
         if (new.target === Weapon) {
