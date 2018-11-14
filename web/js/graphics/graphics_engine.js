@@ -1,9 +1,6 @@
-import EntityRender from "./entity_render.js";
-import MouseLine from "./mouse_line.js";
-
 const ANIMATE_TIME = 1.0;
 
-export default class GraphicsEngine {
+class GraphicsEngine {
     constructor() {
         this.canvas = document.getElementById("game_screen");
         this.ctxt = this.canvas.getContext("2d");

@@ -1,4 +1,4 @@
-export default class EntityRender {
+class EntityRender {
     constructor() {
     }
     

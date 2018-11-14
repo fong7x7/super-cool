@@ -1,6 +1,3 @@
-import GraphicsEngine from "./graphics/graphics_engine.js";
-import APIComm from "./comms/api_comm.js";
-
 function main() {
     let current_update_time = -1;
     let current_player_update_time = -1;
