@@ -13,6 +13,7 @@ module.exports = class Game {
         this.playerIds = new Set();
         this.laserIds = new Set();
         this.entities = {};
+        this.previousEntities = {};
         this.currentEntityID = 0;
         this.updateTimeStamp = 0;
         this.newPlayerTimeStamp = 0;
@@ -31,7 +32,11 @@ module.exports = class Game {
 
     update() {
         this.fireWeapons();
+
+        this.previousEntities = JSON.parse(JSON.stringify(this.entities)); // deep copy
+
         this.processProjectiles();
+        this.updateEntityPositions();
         this.resetPlayerMovements();
         this.updateTimeStamp = new Date().getTime();
         this.roundTime = 0; // Reset round time once update is done
@@ -97,6 +102,17 @@ module.exports = class Game {
                 game.entities[id] = null;
                 game.laserIds.remove(id);
             }
+        });
+    }
+
+    updateEntityPositions() {
+        let game = this;
+        Object.keys(this.entities).forEach(function(id) {
+            let entity = game.entities[id];
+            if(!entity.physical) { return; }
+
+            entity.x += Math.cos(entity.angle)*entity.magnitude;
+            entity.y += Math.sin(entity.angle)*entity.magnitude;
         });
     }
 

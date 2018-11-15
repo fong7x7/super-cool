@@ -28,9 +28,17 @@ class APIComm {
         });
     }
 
-    getGameState(callback) {
+    getCurrentGameState(callback) {
         $.ajax({
-            url: '/gamestate',
+            url: '/currentGameState',
+            type: 'GET',
+            success: callback
+        });
+    }
+
+    getPreviousGameState(callback) {
+        $.ajax({
+            url: '/previousGameState',
             type: 'GET',
             success: callback
         });

@@ -39,7 +39,7 @@ class GraphicsEngine {
                 existing.angle = entity.angle;
                 existing.magnitude = entity.magnitude;
             } else {
-                engine.entities[entity.entityId] = entity;
+                engine.entities[entity.entityId] = jQuery.extend(true, {}, entity); // deep copy
             }
         });
     }

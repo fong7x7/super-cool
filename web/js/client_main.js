@@ -51,10 +51,14 @@ function main() {
             let limited = engine.move_line.getLimitedMousePos();
             let mdx = limited.x-engine.move_line.start_x;
             let mdy = limited.y-engine.move_line.start_y;
-            let move_angle = Math.atan2(mdy, mdx);
-            let shoot_angle = Math.atan2(engine.shoot_line.y-engine.shoot_line.start_y, engine.shoot_line.x-engine.shoot_line.start_x);
+            let sdx = engine.shoot_line.x-engine.shoot_line.start_x;
+            let sdy = engine.shoot_line.y-engine.shoot_line.start_y;
 
-            api.sendPlayerAction(player.entityId, { angle: move_angle, magnitude: Math.sqrt(mdx*mdx + mdy*mdy)}, { angle: shoot_angle });
+            api.sendPlayerAction(
+                player.entityId,
+                { angle: Math.atan2(mdy, mdx), magnitude: Math.sqrt(mdx*mdx + mdy*mdy) },
+                { angle: Math.atan2(sdy, sdx), magnitude: Math.sqrt(sdx*sdx + sdy*sdy) }
+            );
         }
     });
 
@@ -84,8 +88,8 @@ function main() {
             player = data;
             console.log("Joined Session! id: " + player.entityId);
 
-            api.getGameState((entities) => {
-                engine.updateEntities(entities);
+            api.getCurrentGameState((entities) => {
+                engine.entities = entities;
                 engine.start();
 
                 document.getElementById('login_screen').setAttribute("style", "display: none");
@@ -102,11 +106,13 @@ function main() {
                 current_player_update_time = data.newPlayerTimeStamp;
             } else if(current_update_time < data.readyTimeStamp) {
                 current_update_time = data.readyTimeStamp;
-                api.getGameState((entities) => {
+                api.getPreviousGameState((entities) => {
                     engine.updateEntities(entities);
                     updatePlayerData(entities);
                     engine.animate_done = function() {
-                        engine.entities = entities;
+                        api.getCurrentGameState((entities) => {
+                            engine.entities = entities;
+                        });
                     };
                     engine.hideMouseLines();
                     engine.play();
@@ -114,7 +120,7 @@ function main() {
                 });
             } else if(current_player_update_time < data.newPlayerTimeStamp) {
                 current_player_update_time = data.newPlayerTimeStamp;
-                api.getGameState((entities) => {
+                api.getCurrentGameState((entities) => {
                     engine.updateEntities(entities);
                     updatePlayerData(entities);
                     document.getElementById('playerCount').innerHTML = getPlayerCount(engine.entities);

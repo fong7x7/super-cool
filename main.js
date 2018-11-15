@@ -18,8 +18,12 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/web/html/index.html');
 });
 
-app.get('/gamestate', function (req, res) {
+app.get('/currentGameState', function (req, res) {
 	res.json(game.entities);
+});
+
+app.get('/previousGameState', function (req, res) {
+    res.json(game.previousEntities);
 });
 
 app.get('/heartbeat', function (req, res) {
