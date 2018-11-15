@@ -123,7 +123,7 @@ module.exports = class Game {
 
         this.laserIds.forEach((laserId) => {
             let laser = game.entities[laserId];
-            let predicted_laser = laser.predictPosition(laser);
+            let predicted_laser = laser.predictPosition();
             let closest_time = -1;
             let closest_entity_hit_id = -1;
 
