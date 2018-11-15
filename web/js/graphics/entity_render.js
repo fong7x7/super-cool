@@ -15,8 +15,9 @@ class EntityRender {
     }
     
     static drawLaser(ctxt, laser) {
-        let next_x = laser.x + Math.cos(laser.angle)*laser.size;
-        let next_y = laser.y + Math.sin(laser.angle)*laser.size;
+        let angle = Math.atan2(laser.vy, laser.vx);
+        let next_x = laser.x + Math.cos(angle)*laser.size;
+        let next_y = laser.y + Math.sin(angle)*laser.size;
 
         ctxt.beginPath();
         ctxt.lineWidth = 2;

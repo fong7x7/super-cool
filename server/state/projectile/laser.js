@@ -8,9 +8,10 @@ module.exports = class Laser extends Projectile {
     }
 
     getEndPoint() {
+        let angle = this.getVelocityAngle();
         return {
-            x: this.x + Math.cos(this.angle) * this.size,
-            y: this.y + Math.sin(this.angle) * this.size
+            x: this.x + Math.cos(angle) * this.size,
+            y: this.y + Math.sin(angle) * this.size
         }
     }
 };

@@ -111,8 +111,9 @@ module.exports = class Game {
             let entity = game.entities[id];
             if(!entity.physical) { return; }
 
-            entity.x += Math.cos(entity.angle)*entity.magnitude;
-            entity.y += Math.sin(entity.angle)*entity.magnitude;
+            // increment position based on entity velocity in pixels/second
+            entity.x += entity.vx;
+            entity.y += entity.vy;
         });
     }
 
@@ -201,7 +202,7 @@ module.exports = class Game {
             wall.x = Game.randomNumber(width);
             wall.y = Game.randomNumber(height);
             wall.size = 30;
-            wall.angle = Game.randomNumber(2*Math.PI) + - Math.PI; // random angle from -180 to 180
+            wall.wall_angle = Game.randomNumber(2*Math.PI) + - Math.PI; // random angle from -180 to 180
             this.addEntity(wall);
         }
     }

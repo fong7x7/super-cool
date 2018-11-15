@@ -6,4 +6,4 @@ module.exports = class Barrel extends Entity {
         this.name = "barrel";
         this.type = "barrel";
     }
-}
+};

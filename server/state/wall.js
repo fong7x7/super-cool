@@ -6,4 +6,4 @@ module.exports = class Wall extends Entity {
         this.wall_angle = wall_angle;
         this.type = "wall";
     }
-}
+};

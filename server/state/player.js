@@ -23,4 +23,4 @@ module.exports = class Player extends Entity {
             this.equipItem(0);
         }
     }
-}
+};

@@ -54,7 +54,7 @@ app.post('/player/action', function (req, res) {
 	weapon.aim(req.body.shoot.angle, req.body.shoot.magnitude);
 
 	// update player movement
-	player.setMovement(req.body.move.angle, req.body.move.magnitude);
+	player.setVelocityFromAngle(req.body.move.angle, req.body.move.magnitude);
 	player.movementConfirmed = true;
 
 	// update turn if all players are ready

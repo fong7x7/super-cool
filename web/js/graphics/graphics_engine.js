@@ -36,8 +36,8 @@ class GraphicsEngine {
             let entity = entities[id];
             let existing = engine.entities[entity.entityId];
             if(existing) {
-                existing.angle = entity.angle;
-                existing.magnitude = entity.magnitude;
+                existing.vx = entity.vx;
+                existing.vy = entity.vy;
             } else {
                 engine.entities[entity.entityId] = jQuery.extend(true, {}, entity); // deep copy
             }
@@ -55,8 +55,8 @@ class GraphicsEngine {
             let entity = entities[id];
             if(!entity.physical) { return; } // don't animate non-physical objects
 
-            entity.x += Math.cos(entity.angle)*entity.magnitude*engine.delta_time;
-            entity.y += Math.sin(entity.angle)*entity.magnitude*engine.delta_time;
+            entity.x += entity.vx * engine.delta_time;
+            entity.y += entity.vy * engine.delta_time;
         });
     }
 

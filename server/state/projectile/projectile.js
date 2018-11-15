@@ -5,8 +5,7 @@ module.exports = class Projectile extends Entity {
         super();
         this.x = x;
         this.y = y;
-        this.angle = angle;
-        this.magnitude = magnitude;
+        this.setVelocityFromAngle(angle, magnitude);
         this.ownerId = ownerId;
     }
-}
+};
