@@ -7,9 +7,7 @@ class APIComm {
             type: 'post',
             dataType: 'json',
             contentType: 'application/json',
-            success: function (data) {
-                callback(data);
-            },
+            success: callback,
             data: JSON.stringify({name: name})
         });
     }
@@ -20,11 +18,7 @@ class APIComm {
             type: 'post',
             dataType: 'json',
             contentType: 'application/json',
-            success: function (data) {
-                if(callback) {
-                    callback();
-                }
-            },
+            success: callback,
             data: JSON.stringify({
                 playerId: id,
                 move: move, // { angle: , magnitude: }
@@ -38,9 +32,7 @@ class APIComm {
         $.ajax({
             url: '/gamestate',
             type: 'GET',
-            success: function(data) {
-                callback(data);
-            }
+            success: callback
         });
     }
 
@@ -48,9 +40,7 @@ class APIComm {
         $.ajax({
             url: '/heartbeat',
             type: 'GET',
-            success: function(data) {
-                callback(data)
-            }
+            success: callback
         });
     }
 }
