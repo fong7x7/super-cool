@@ -44,12 +44,13 @@ module.exports = class Game {
     }
 
     arePlayersReady() {
-        for(let i = 0; i < this.playerIds.length; i++) {
-            if(!this.entities[this.playerIds[i]].movementConfirmed) {
-                return false;
+        let ready = true;
+        this.playerIds.forEach((id) => {
+            if(!this.entities[id].movementConfirmed) {
+                ready = false;
             }
-        }
-        return true;
+        });
+        return ready;
     }
 
     addEntity(entity) {
