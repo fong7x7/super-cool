@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Super Cool</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../style/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/comms/api_comm.js"></script>
+    <script type="text/javascript" src="../js/graphics/entity_render.js"></script>
+    <script type="text/javascript" src="../js/graphics/mouse_line.js"></script>
+    <script type="text/javascript" src="../js/graphics/graphics_engine.js"></script>
+    <script type="text/javascript" src="../js/client_main.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h>SUPER COOL</h>
+        <div class="count" id="countBox" style="display: none"><h>Player Count: <span id="playerCount">1</span></h></div>
+    </div>
+    <div class="main-body">
+        <div id="login_screen" style="display: block">
+            <div class="screen-body">
+                <div><h class="title-logo">SUPER COOL</h></div>
+                <div><input id="nameInput" type="text" class="login-input" placeholder="ENTER NAME"/></div>
+                <div class="button" id="joinButton">JOIN</div>
+            </div>
+        </div>
+        <canvas id="game_screen" width="1280" height="720" style="display: none"></canvas>
+    </div>
+    <div>
+        <div class="button" id="moveButton">MOVE</div>
+        <div class="button" id="shootButton">FIRE</div>
+    </div>
+    <script>
+        (function() {
+            main();
+        })();
+    </script>
+</body>
+</html>
