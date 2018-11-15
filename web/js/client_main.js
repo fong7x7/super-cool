@@ -108,10 +108,10 @@ function main() {
                 current_update_time = data.readyTimeStamp;
                 api.getPreviousGameState((entities) => {
                     engine.updateEntities(entities);
-                    updatePlayerData(entities);
                     engine.animate_done = function() {
                         api.getCurrentGameState((entities) => {
                             engine.entities = entities;
+                            updatePlayerData(entities);
                         });
                     };
                     engine.hideMouseLines();
