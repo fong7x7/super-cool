@@ -1,9 +1,10 @@
 const Projectile = require("./projectile.js");
 
 module.exports = class Laser extends Projectile {
-    constructor(x, y, angle, magnitude, ownerId) {
-        super(x, y, angle, magnitude, ownerId);
+    constructor(x, y, angle, ownerId) {
+        super(x, y, angle, 150, ownerId);
         this.type = "laser";
+        this.color = "#00FFFF";
     }
 
     getEndPoint() {
@@ -12,4 +13,4 @@ module.exports = class Laser extends Projectile {
             y: this.y + Math.sin(this.angle) * this.size
         }
     }
-}
+};

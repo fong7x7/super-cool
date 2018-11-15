@@ -16,9 +16,9 @@ module.exports = class Shotgun extends Weapon {
 
         this.ammo -= 1;
         return [ // spread 3 lasers in different directions
-            new Laser(this.x, this.y, Weapon.formatAngle(this.aim_angle - this.angleDeviation), this.aim_magnitude, this.ownerId),
-            new Laser(this.x, this.y, this.aim_angle, this.aim_magnitude, this.ownerId),
-            new Laser(this.x, this.y, Weapon.formatAngle(this.aim_angle + this.angleDeviation), this.aim_magnitude, this.ownerId)
+            new Laser(this.x, this.y, Weapon.formatAngle(this.aim_angle - this.angleDeviation), this.ownerId),
+            new Laser(this.x, this.y, this.aim_angle, this.ownerId),
+            new Laser(this.x, this.y, Weapon.formatAngle(this.aim_angle + this.angleDeviation), this.ownerId)
         ];
     }
-}
+};
