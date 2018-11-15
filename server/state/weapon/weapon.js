@@ -29,9 +29,4 @@ module.exports = class Weapon extends Entity {
     static randomNumber(to) {
         return Math.ceil(Math.random() * to) - 1;
     }
-
-    static formatAngle(angle) {
-        // TODO: format yaw angle to be between -180 and 180
-        return angle;
-    }
-}
+};

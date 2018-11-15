@@ -1,5 +1,6 @@
 const Weapon = require("./weapon.js");
 const Laser = require("../projectile/laser.js");
+const AngleMath = require("../../math/angle_math.js");
 
 module.exports = class Rifle extends Weapon {
     constructor() {
@@ -14,7 +15,7 @@ module.exports = class Rifle extends Weapon {
             return [];
         }
 
-        let spread_angle = this.aim_angle + (Weapon.randomNumber(this.angleDeviation*2) - this.angleDeviation);
+        let spread_angle = AngleMath.formatAngle(this.aim_angle + (Weapon.randomNumber(this.angleDeviation*2) - this.angleDeviation));
         this.ammo -= 1;
         return [ // spawn 3 direct lasers for maximum damage!
             new Laser(this.x, this.y, spread_angle, this.ownerId),
