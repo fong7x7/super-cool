@@ -1,25 +1,43 @@
 const Assert = require("./assert.js");
 const CollisionMath = require("../server/math/collision_math.js");
-const PointMath = require("../server/math/point_math.js");
-const Player = require("../server/state/player.js");
-const Laser = require("../server/state/projectile/laser.js");
-const Game = require("../server/state/game.js");
 
 TestCollisionMath = {
-    testEntityHit: function() {
-        let player = new Player();
-        player.x = 0;
-        player.y = 0;
-        let laser = new Laser(-10, 0, 0, 0);
+    testIntersect: function() {
+        let p1 = { x: -2, y: 0 };
+        let p2 = { x: 2, y: 0 };
+        let q1 = { x: 0, y: -2 };
+        let q2 = { x: 0, y: 2 };
 
-        return Assert.True(Game.determineEntityHit(player, laser));
+        return Assert.True(CollisionMath.intersects(p1, p2, q1, q2));
+    },
+
+    testIntersectPolygon: function() {
+        let poly = [
+            { x: -2, y: 2 },
+            { x: 2, y: 2 },
+            { x: 2, y: -2 },
+            { x: -2, y: -2 }
+        ];
+
+        let q1 = { x: 0, y: -5 };
+        let q2 = { x: 0, y: 5 };
+
+        return Assert.True(CollisionMath.intersectsPolygon(poly, q1, q2));
     }
 };
 
+console.log("Running tests for CollisionMath...");
+let total = 0;
+let passed = 0;
+
 Object.keys(TestCollisionMath).forEach(function(test) {
+    total++;
     if(TestCollisionMath[test]()) {
+        passed++;
         console.log(test + ": Passed");
     } else {
         console.log(test + ": Failed");
     }
 });
+
+console.log(passed + "/" + total + " tests succeeded");
