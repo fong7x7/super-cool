@@ -7,41 +7,43 @@ module.exports = class CollisionMath {
      *
      * @param polygon1
      * @param polygon2
-     * @returns {boolean}
+     * @returns {*}
      */
     static collides(polygon1, polygon2) {
         let p1 = polygon1[polygon1.length-1];
         for(let i = 0; i < polygon1.length; i++) {
             let p2 = polygon1[i];
 
-            if(CollisionMath.intersectsPolygon(polygon2, p1, p2)) {
-                return true;
+            let intersect = CollisionMath.intersectsPolygon(polygon2, p1, p2);
+            if(intersect) {
+                return intersect;
             }
 
             p1 = p2;
         }
-        return false
+        return null;
     }
 
     /**
-     *
+     * Determines if a polygon gets intersected by a line between the given points
      * @param polygon
      * @param q1
      * @param q2
-     * @returns {boolean}
+     * @returns {*}
      */
     static intersectsPolygon(polygon, q1, q2) {
         let p1 = polygon[polygon.length-1];
         for(let i = 0; i < polygon.length; i++) {
             let p2 = polygon[i];
 
-            if(CollisionMath.intersects(p1, p2, q1, q2)) {
-                return true;
+            let intersect = CollisionMath.intersects(p1, p2, q1, q2);
+            if(intersect) {
+                return intersect;
             }
 
             p1 = p2;
         }
-        return false
+        return {x: 0, y: 0};
     }
 
     /**
@@ -51,7 +53,7 @@ module.exports = class CollisionMath {
      * @param p2
      * @param q1
      * @param q2
-     * @return {Point} if the segments intersect
+     * @return {*} if the segments intersect
      */
     static intersects(p1, p2, q1, q2) {
         if(CollisionMath.isOnLine(p1, q1, q2)) {
@@ -117,23 +119,25 @@ module.exports = class CollisionMath {
         return PointMath.distance(a, check_point) + PointMath.distance(b, check_point) <= PointMath.distance(a,b) + 0.00000001;
     }
 
-    static createPathHitBox(entity) {
-        let angle = Math.atan2(entity.vy, entity.vx);
+    static createPathHitBox(x, y, vx, vy, size) {
+        let angle = Math.atan2(vy, vx);
         let perpendicular = AngleMath.formatAngle(angle+Math.PI/2);
 
-        let offset = entity.size/2;
+        let offset = size/2;
 
-        let start_point = {x: entity.x - Math.cos(angle)*offset, y: entity.y - Math.sin(angle)*offset };
-        let end_point = {x: entity.x + entity.vx + Math.cos(angle)*offset, y: entity.y + entity.vy + Math.sin(angle)*offset };
+        let start_x = x - Math.cos(angle)*offset;
+        let start_y = y - Math.sin(angle)*offset;
+        let end_x = x + vx + Math.cos(angle)*offset;
+        let end_y = y + vy + Math.sin(angle)*offset;
 
-        let left_offset = Math.cos(perpendicular)*offset;
-        let right_offset = Math.sin(perpendicular)*offset;
+        let x_offset = Math.cos(perpendicular)*offset;
+        let y_offset = Math.sin(perpendicular)*offset;
 
         return [
-            { x: start_point.x + left_offset, y: start_point.y + right_offset },
-            { x: start_point.x - left_offset, y: start_point.y - right_offset },
-            { x: end_point.x + left_offset, y: end_point.y + right_offset },
-            { x: end_point.x - left_offset, y: end_point.y - right_offset }
+            { x: start_x + x_offset, y: start_y + y_offset },
+            { x: start_x - x_offset, y: start_y - y_offset },
+            { x: end_x - x_offset, y: end_y - y_offset },
+            { x: end_x + x_offset, y: end_y + y_offset }
         ]
     }
 

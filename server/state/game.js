@@ -135,19 +135,18 @@ module.exports = class Game {
                 if (entity.type == 'laser') { return; } // skip if entity is laser
                 if (!entity.physical) { return; } // skip non-physical objects
 
-                let path_hit_box = CollisionMath.createPathHitBox(entity);
+                let path_hit_box = CollisionMath.createPathHitBox(entity.x, entity.y, entity.vx, entity.vy, entity.size);
                 let intersection = CollisionMath.intersectsPolygon(path_hit_box, laser, predicted_endpoint);
                 if (!intersection) { return; } // skip if no intersection
 
-                let mag = PointMath.distance(laser, intersection);
-                let time_hit = mag / laser.getVelocityMagnitude();
+                let time_hit = PointMath.distance(laser, intersection) / PointMath.distance(laser, predicted_endpoint);
 
                 console.log("Entity Path hit! id: " + id + " time: " + time_hit);
 
                 // skip if laser is not going to hit entity closer
                 if (closest_time != -1 && time_hit > closest_time) { return; }
 
-                if (Game.determineEntityHit(entity.predictPosition(time_hit), predicted_laser)) {
+                if (Game.determineEntityHit(entity.predictPosition(time_hit), laser, predicted_laser)) {
                     console.log("Entity Actually Hit! " + id);
                     closest_time = time_hit;
                     closest_entity_hit_id = entity.entityId;
@@ -163,14 +162,12 @@ module.exports = class Game {
         return entitiesHit;
     }
 
-    static determineEntityHit(entity, laser) {
-        let next_laser = laser.getEndPoint();
-
-        if(PointMath.distance(entity, laser) <= entity.size/2) { return true; }
-        if(PointMath.distance(entity, next_laser) <= entity.size/2) { return true; }
+    static determineEntityHit(entity, start, end) {
+        if(PointMath.distance(entity, start) <= entity.size/2) { return true; }
+        if(PointMath.distance(entity, end) <= entity.size/2) { return true; }
 
         // determine if crossed
-        return CollisionMath.intersectsPolygon(CollisionMath.createHitBox(entity), laser, next_laser);
+        return CollisionMath.intersectsPolygon(CollisionMath.createHitBox(entity), start, end);
     }
 
     createPlayer(name) {
