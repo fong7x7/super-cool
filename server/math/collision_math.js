@@ -35,13 +35,11 @@ module.exports = class CollisionMath {
             let p2 = polygon[i];
 
             if(CollisionMath.intersects(p1, p2, q1, q2)) {
-                console.log('poly intersection!');
                 return true;
             }
 
             p1 = p2;
         }
-        console.log('poly fail!');
         return false
     }
 

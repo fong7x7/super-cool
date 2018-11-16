@@ -7,6 +7,7 @@ const Laser = require("./projectile/laser.js");
 const Pistol = require("./weapon/pistol.js");
 const Rifle = require("./weapon/rifle.js");
 const Shotgun = require("./weapon/shotgun.js");
+const AngleMath = require("../math/angle_math.js");
 
 module.exports = class Game {
     constructor(){
@@ -133,8 +134,11 @@ module.exports = class Game {
                 if (entity.type == 'laser') { return; } // skip if entity is laser
                 if (!entity.physical) { return; } // skip non-physical objects
 
-                let intersection = CollisionMath.intersects(laser, predicted_laser, entity, entity.predictPosition());
+                let path_hit_box = Game.createPathHitBox(entity);
+                let intersection = CollisionMath.intersectsPolygon(path_hit_box, laser, predicted_laser);
                 if (!intersection) { return; } // skip if no intersection
+
+                console.log("Entity Path hit! id: " + id);
 
                 let mag = PointMath.distance(laser, intersection);
                 let time_hit = mag / laser.magnitude;
@@ -157,6 +161,23 @@ module.exports = class Game {
         return entitiesHit;
     }
 
+    static createPathHitBox(entity) {
+        let angle = Math.atan2(entity.vy, entity.vx);
+        let perpendicular = AngleMath.formatAngle(angle+Math.PI/2);
+
+        let offset = entity.size/2;
+
+        let start_point = {x: entity.x - Math.cos(angle)*offset, y: entity.y - Math.sin(angle)*offset };
+        let end_point = {x: entity.x + entity.vx + Math.cos(angle)*offset, y: entity.y + entity.vy + Math.sin(angle)*offset };
+
+        return [
+            { x: start_point.x + Math.cos(perpendicular)*offset, y: start_point.y + Math.sin(perpendicular)*offset },
+            { x: start_point.x - Math.cos(perpendicular)*offset, y: start_point.y - Math.sin(perpendicular)*offset },
+            { x: end_point.x + Math.cos(perpendicular)*offset, y: end_point.y + Math.sin(perpendicular)*offset },
+            { x: end_point.x - Math.cos(perpendicular)*offset, y: end_point.y - Math.sin(perpendicular)*offset }
+        ]
+    }
+
     static createHitBox(entity) {
         let offset = entity.size/2;
 
@@ -171,8 +192,8 @@ module.exports = class Game {
     static determineEntityHit(entity, laser) {
         let next_laser = laser.getEndPoint();
 
-        if(PointMath.distance(entity, laser) <= entity.size) { return true; }
-        if(PointMath.distance(entity, next_laser) <= entity.size) { return true; }
+        if(PointMath.distance(entity, laser) <= entity.size/2) { return true; }
+        if(PointMath.distance(entity, next_laser) <= entity.size/2) { return true; }
 
         // determine if crossed
         return CollisionMath.intersectsPolygon(Game.createHitBox(entity), laser, next_laser);
