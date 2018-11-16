@@ -125,6 +125,7 @@ module.exports = class Game {
         this.laserIds.forEach((laserId) => {
             let laser = game.entities[laserId];
             let predicted_laser = laser.predictPosition();
+            let predicted_endpoint = Laser.calculateEndPoint(predicted_laser, laser.getVelocityAngle(), laser.size);
             let closest_time = -1;
             let closest_entity_hit_id = -1;
 
@@ -135,18 +136,19 @@ module.exports = class Game {
                 if (!entity.physical) { return; } // skip non-physical objects
 
                 let path_hit_box = CollisionMath.createPathHitBox(entity);
-                let intersection = CollisionMath.intersectsPolygon(path_hit_box, laser, predicted_laser);
+                let intersection = CollisionMath.intersectsPolygon(path_hit_box, laser, predicted_endpoint);
                 if (!intersection) { return; } // skip if no intersection
 
-                console.log("Entity Path hit! id: " + id);
-
                 let mag = PointMath.distance(laser, intersection);
-                let time_hit = mag / laser.magnitude;
+                let time_hit = mag / laser.getVelocityMagnitude();
+
+                console.log("Entity Path hit! id: " + id + " time: " + time_hit);
 
                 // skip if laser is not going to hit entity closer
                 if (closest_time != -1 && time_hit > closest_time) { return; }
 
-                if (Game.determineEntityHit(entity.predictPosition(time_hit), laser)) {
+                if (Game.determineEntityHit(entity.predictPosition(time_hit), predicted_laser)) {
+                    console.log("Entity Actually Hit! " + id);
                     closest_time = time_hit;
                     closest_entity_hit_id = entity.entityId;
                 }
