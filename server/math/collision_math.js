@@ -1,4 +1,5 @@
 const PointMath = require("./point_math.js");
+const AngleMath = require("./angle_math.js");
 
 module.exports = class CollisionMath {
 
@@ -116,4 +117,34 @@ module.exports = class CollisionMath {
         return PointMath.distance(a, check_point) + PointMath.distance(b, check_point) <= PointMath.distance(a,b) + 0.00000001;
     }
 
-}
+    static createPathHitBox(entity) {
+        let angle = Math.atan2(entity.vy, entity.vx);
+        let perpendicular = AngleMath.formatAngle(angle+Math.PI/2);
+
+        let offset = entity.size/2;
+
+        let start_point = {x: entity.x - Math.cos(angle)*offset, y: entity.y - Math.sin(angle)*offset };
+        let end_point = {x: entity.x + entity.vx + Math.cos(angle)*offset, y: entity.y + entity.vy + Math.sin(angle)*offset };
+
+        let left_offset = Math.cos(perpendicular)*offset;
+        let right_offset = Math.sin(perpendicular)*offset;
+
+        return [
+            { x: start_point.x + left_offset, y: start_point.y + right_offset },
+            { x: start_point.x - left_offset, y: start_point.y - right_offset },
+            { x: end_point.x + left_offset, y: end_point.y + right_offset },
+            { x: end_point.x - left_offset, y: end_point.y - right_offset }
+        ]
+    }
+
+    static createHitBox(entity) {
+        let offset = entity.size/2;
+
+        return [
+            { x: (entity.x-offset), y: (entity.y+offset) },
+            { x: (entity.x+offset), y: (entity.y+offset) },
+            { x: (entity.x+offset), y: (entity.y-offset) },
+            { x: (entity.x-offset), y: (entity.y-offset) }
+        ]
+    }
+};
