@@ -43,7 +43,7 @@ module.exports = class CollisionMath {
 
             p1 = p2;
         }
-        return {x: 0, y: 0};
+        return null;
     }
 
     /**
