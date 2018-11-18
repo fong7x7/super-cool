@@ -7,7 +7,6 @@ const Laser = require("./projectile/laser.js");
 const Pistol = require("./weapon/pistol.js");
 const Rifle = require("./weapon/rifle.js");
 const Shotgun = require("./weapon/shotgun.js");
-const AngleMath = require("../math/angle_math.js");
 
 module.exports = class Game {
     constructor(){
@@ -74,6 +73,14 @@ module.exports = class Game {
         return entity.entityId;
     }
 
+    removeEntities(ids) {
+        if(ids.length <= 0) { return; }
+        let game = this;
+        ids.forEach((id) => {
+            delete game.entities[id];
+        });
+    }
+
     getEntity(id) {
         return this.entities[id];
     }
@@ -93,16 +100,20 @@ module.exports = class Game {
     }
 
     processProjectiles() {
-        let hitIds = this.determineCollision();
+        let entitiesHit = this.determineCollision();
         let game = this;
-        hitIds.forEach((id) => {
-            let entity = game.entities[id];
-            if(entity.prototype instanceof Player) {
-                entity.lives -= 1;
-            } else if(entity.prototype instanceof Laser) {
-                game.entities[id] = null;
-                game.laserIds.remove(id);
-            }
+        let entitiesAlreadyHit = new Set();
+        let lasersAlreadyHit = new Set();
+        entitiesHit.forEach((hit) => {
+            if(entitiesAlreadyHit.has(hit.entityId)) { return; }
+            if(lasersAlreadyHit.has(hit.laserId)) { return; }
+
+            let entity = game.entities[hit.entityId];
+            entitiesAlreadyHit.add(hit.entityId);
+            lasersAlreadyHit.add(hit.laserId);
+            entity.lives -= 1;
+            entity.deathTime = hit.time;
+            game.entities[hit.laserId].deathTime = hit.time;
         });
     }
 
@@ -119,46 +130,41 @@ module.exports = class Game {
     }
 
     determineCollision() {
-        let entitiesHit = new Set();
+        let entitiesHit = []; // hit_data = { time, entityId, laserId }
         let game = this;
 
         this.laserIds.forEach((laserId) => {
             let laser = game.entities[laserId];
             let predicted_laser = laser.predictPosition();
+            let endpoint = laser.getEndPoint();
+            let laser_mag = laser.getVelocityMagnitude();
             let predicted_endpoint = Laser.calculateEndPoint(predicted_laser, laser.getVelocityAngle(), laser.size);
-            let closest_time = -1;
-            let closest_entity_hit_id = -1;
 
-            Object.keys(game.entities).forEach(function(id) {
+            game.playerIds.forEach(function(id) {
                 let entity = game.entities[id];
                 if (laser.ownerId == entity.entityId) { return; } // skip if laser is owned by entity
-                if (entity.type == 'laser') { return; } // skip if entity is laser
-                if (!entity.physical) { return; } // skip non-physical objects
 
                 let path_hit_box = CollisionMath.createPathHitBox(entity.x, entity.y, entity.vx, entity.vy, entity.size);
                 let intersection = CollisionMath.intersectsPolygon(path_hit_box, laser, predicted_endpoint);
-                if (!intersection) { return; } // skip if no intersection
 
-                let time_hit = PointMath.distance(laser, intersection) / PointMath.distance(laser, predicted_endpoint);
+                // skip if no intersection
+                if (!intersection) { return; }
 
-                console.log("Entity Path hit! id: " + id + " time: " + time_hit);
+                let int_dist = PointMath.distance(endpoint, intersection);
+                let time_hit = int_dist / laser_mag;
 
-                // skip if laser is not going to hit entity closer
-                if (closest_time != -1 && time_hit > closest_time) { return; }
+                // skip if laser doesn't actually hit player
+                if (!Game.determineEntityHit(entity.predictPosition(time_hit), laser, predicted_laser)) { return; }
 
-                if (Game.determineEntityHit(entity.predictPosition(time_hit), laser, predicted_laser)) {
-                    console.log("Entity Actually Hit! " + id);
-                    closest_time = time_hit;
-                    closest_entity_hit_id = entity.entityId;
-                }
+                // add every entity that gets hit by the laser and the time hit
+                let hit = { time: time_hit, entityId: id, laserId: laserId};
+                entitiesHit.push(hit);
             });
-
-            if (closest_time > -1) {
-                entitiesHit.add(laser.entityId);
-                entitiesHit.add(closest_entity_hit_id);
-            }
         });
-
+        // sort all hits by time
+        entitiesHit.sort((a, b) => {
+            return a.time-b.time;
+        });
         return entitiesHit;
     }
 

@@ -14,6 +14,7 @@ module.exports = class Entity {
         this.size = 30;             // Size of the entity (used for collision and client side rendering)
         this.physical = true;       // Determines if the entity is physically on the map
         this.name = "entity";       // Name of the entity
+        this.deathTime = -1;
 
         // abstract class check
         if (new.target === Entity) {
