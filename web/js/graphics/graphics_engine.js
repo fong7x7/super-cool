@@ -44,6 +44,14 @@ class GraphicsEngine {
         });
     }
 
+    removeEntities(ids) {
+        if(ids.length == 0) { return; }
+        let engine = this;
+        ids.forEach((id) => {
+            delete engine.entities[id];
+        });
+    }
+
     play() {
         this.animate_time = 0;
         this.do_animation = true;
@@ -51,13 +59,18 @@ class GraphicsEngine {
 
     animateEntities(entities) {
         let engine = this;
+        let deadIds = new Set();
         Object.keys(entities).forEach(function(id) {
             let entity = entities[id];
+            if(engine.animate_time >= entity.deathTime && entity.deathTime >= 0) {
+                deadIds.add(id);
+            }
             if(!entity.physical) { return; } // don't animate non-physical objects
 
             entity.x += entity.vx * engine.delta_time;
             entity.y += entity.vy * engine.delta_time;
         });
+        this.removeEntities(deadIds);
     }
 
     animate() {
